@@ -2,7 +2,7 @@
 
 #include "lnast_parser.hpp"
 
-"include "tree.hpp"
+#include "tree.hpp"
 #include "lnast.hpp"
 #include "lnast_lexer.hpp"
 

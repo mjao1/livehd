@@ -3,7 +3,7 @@
 #pragma once
 
 #include "lgraph_base_core.hpp"
-"include "tree.hpp"
+#include "tree.hpp"
 #include "node.hpp"
 
 class Node_tree : public hhds::tree<Node> {
