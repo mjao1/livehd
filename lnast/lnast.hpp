@@ -10,7 +10,26 @@
 #include "tree.hpp"
 #include "lnast_ntype.hpp"
 
-using Lnast_nid                     = hhds::Tree_pos;
+// wrapper class to maintain compatibility with old interface
+class Lnast_nid {
+private:
+  hhds::Tree_pos pos;
+
+public:
+  Lnast_nid() : pos(hhds::INVALID) {}
+  Lnast_nid(hhds::Tree_pos p) : pos(p) {}
+  
+  bool is_invalid() const { return pos == hhds::INVALID; }
+  void invalidate() { pos = hhds::INVALID; }
+  
+  static Lnast_nid root() { return Lnast_nid(hhds::ROOT); }
+  
+  operator hhds::Tree_pos() const { return pos; }
+  
+  bool operator==(const Lnast_nid& other) const { return pos == other.pos; }
+  bool operator!=(const Lnast_nid& other) const { return pos != other.pos; }
+};
+
 using Phi_rtable                    = absl::flat_hash_map<std::string, Lnast_nid>;  // rtable = resolve_table
 using Cnt_rtable                    = absl::flat_hash_map<std::string, int16_t>;
 using Selc_lrhs_table               = absl::flat_hash_map<Lnast_nid, std::pair<bool, Lnast_nid>>;  // sel -> (lrhs, paired opr node)
@@ -158,8 +177,8 @@ public:
       : top_module_name(_module_name), source_filename(_file_name) {}
 
   void ssa_trans() { 
-    do_ssa_trans(hhds::root()); 
-  };
+    do_ssa_trans(Lnast_nid::root()); 
+  }
 
   std::string_view get_top_module_name() const { return top_module_name; }
   std::string_view get_source() const { return source_filename; }

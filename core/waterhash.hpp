@@ -10,7 +10,7 @@
 #include <math.h>
 #include <stdint.h>
 
-namespace lh {
+namespace hhds {
 
 constexpr uint64_t _waterp0 = 0xa0761d65ull, _waterp1 = 0xe7037ed1ull, _waterp2 = 0x8ebc6af1ull;
 constexpr uint64_t _waterp3 = 0x589965cdull, _waterp4 = 0x1d8e4e27ull, _waterp5 = 0xeb44accbull;
