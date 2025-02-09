@@ -54,18 +54,18 @@ double FPObject::calcY(double startY) const {
     return startY + y;
 }
 
-unsigned int FPObject::findNode(Node_tree& tree, lh::Tree_index tidx, double cX, double cY) {
+unsigned int FPObject::findNode(Node_tree& tree, hhds::Tree_pos pos, double cX, double cY) {
   Ntype_op t = getType();
 
   unsigned int sub_count;
 
   if (Ntype::is_synthesizable(t)) {  // leaf node - current hier structure is fine
-    sub_count = outputLgraphLayout(tree, tidx, cX, cY);
+    sub_count = outputLgraphLayout(tree, pos, cX, cY);
   } else if (t == Ntype_op::Sub) {  // Sub node - parameters need to be adjusted
 
     bool found = false;
 
-    lh::Tree_index child_idx = tree.get_first_child(tidx);
+    hhds::Tree_pos child_idx = tree.get_first_child(pos);
     while (child_idx != tree.invalid_index()) {
       auto child = tree.ref_data(child_idx);
 
@@ -98,7 +98,7 @@ unsigned int FPObject::findNode(Node_tree& tree, lh::Tree_index tidx, double cX,
 
     assert(found);
   } else if (t == Ntype_op::Invalid) {  // specific kind of layout - current hier structure is fine
-    sub_count = outputLgraphLayout(tree, tidx, cX, cY);
+    sub_count = outputLgraphLayout(tree, pos, cX, cY);
   } else {
     assert(false);
   }
@@ -106,11 +106,11 @@ unsigned int FPObject::findNode(Node_tree& tree, lh::Tree_index tidx, double cX,
   return sub_count;
 }
 
-unsigned int FPObject::outputLgraphLayout(Node_tree& tree, lh::Tree_index tidx, double startX, double startY) {
+unsigned int FPObject::outputLgraphLayout(Node_tree& tree, hhds::Tree_pos pos, double startX, double startY) {
   bool found = false;
 
-  // lh::Tree_index child_idx = tree.get_first_child(tidx);
-  lh::Tree_index child_idx = tree.get_last_free(tidx, getType());
+  // hhds::Tree_pos child_idx = tree.get_first_child(pos);
+  hhds::Tree_pos child_idx = tree.get_last_free(pos, getType());
   while (child_idx != tree.invalid_index()) {
     Node* child = tree.ref_data(child_idx);
 
@@ -132,7 +132,7 @@ unsigned int FPObject::outputLgraphLayout(Node_tree& tree, lh::Tree_index tidx, 
     child->set_place(p);
     child->set_name(getUniqueName());
 
-    tree.set_last_free(tidx, getType(), child_idx);
+    tree.set_last_child(pos, getType(), child_idx);
 
     break;
   }

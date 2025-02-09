@@ -31,8 +31,8 @@ void Pass_fplan_analyzefp::setup() {
 
 std::string Pass_fplan_analyzefp::safe_name(const Node& n) const { return n.has_name() ? n.get_name() : n.default_instance_name(); }
 
-void Pass_fplan_analyzefp::print_area(const Node_tree& nt, const lh::Tree_index& tidx) const {
-  const auto& n = nt.get_data(tidx);
+void Pass_fplan_analyzefp::print_area(const Node_tree& nt, const hhds::Tree_pos& pos) const {
+  const auto& n = nt.get_data(pos);
   if (!n.has_place()) {
     fmt::print("(no area information)");
     return;
@@ -48,11 +48,11 @@ void Pass_fplan_analyzefp::print_area(const Node_tree& nt, const lh::Tree_index&
              p.get_width() / p.get_height());
 }
 
-void Pass_fplan_analyzefp::print_children(const Node_tree& nt, const lh::Tree_index& tidx) const {
-  for (auto child_idx : nt.children(tidx)) {
+void Pass_fplan_analyzefp::print_children(const Node_tree& nt, const hhds::Tree_pos& pos) const {
+  for (auto child_idx : nt.children(pos)) {
     auto child = nt.get_data(child_idx);
 
-    if (child_idx != nt.get_last_child(tidx)) {
+    if (child_idx != nt.get_last_child(pos)) {
       fmt::print(" ├─ ");
     } else {
       fmt::print(" └─ ");
@@ -122,7 +122,7 @@ Pass_fplan_analyzefp::Pass_fplan_analyzefp(const Eprp_var& var) : Pass("pass.fpl
 
     // can't just open an lgraph node, as different floorplan instances have different names
 
-    for (const auto& index : nt.depth_preorder()) {  // preorder because higher level nodes are probably going to be analyzed more
+    for (const auto& index : nt.pre_order()) {  // preorder because higher level nodes are probably going to be analyzed more
                                                      // often than leaf nodes
       if (index.is_root()) {
         continue;  // skip root for now
@@ -145,7 +145,7 @@ Pass_fplan_analyzefp::Pass_fplan_analyzefp(const Eprp_var& var) : Pass("pass.fpl
           }
 
           hint_map.insert_or_assign(n.get_compact(), hint_enum);
-          const lh::Tree_index parent_idx = nt.get_parent(index);
+          const hhds::Tree_pos parent_idx = nt.get_parent(index);
           const Node&          parent     = nt.get_data(parent_idx);
           if (!parent_idx.is_root() && !hint_map.contains(parent.get_compact())) {
             hint_map.insert_or_assign(parent.get_compact(), UnknownHint);

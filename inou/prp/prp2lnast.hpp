@@ -106,19 +106,19 @@ protected:
 
   // Ref-Attribute Helpers
   // NOTE: This function adds `ref_node` with all attributes `parent` index
-  void add_ref_child(lh::Tree_index parent, node_attr_t ref_node);
-  void add_ref_child(lh::Tree_index parent);  // NOTE: add `primary_node_stack.top()`
+  void add_ref_child(hhds::Tree_pos parent, node_attr_t ref_node);
+  void add_ref_child(hhds::Tree_pos parent);  // NOTE: add `primary_node_stack.top()`
   // NOTE: add `primary_node_stack.top()` if it has any attribute
-  void add_ref_child_conditional(lh::Tree_index parent);
+  void add_ref_child_conditional(hhds::Tree_pos parent);
 
   // Lnast Tree Helpers
   std::unique_ptr<Lnast> lnast;
-  lh::Tree_index         stmts_index;
+  hhds::Tree_pos         stmts_index;
 
-  lh::Tree_index             prev_stmt_index;
-  std::stack<lh::Tree_index> tuple_index_stack;
+  hhds::Tree_pos             prev_stmt_index;
+  std::stack<hhds::Tree_pos> tuple_index_stack;
 
-  lh::Tree_index   type_index;
+  hhds::Tree_pos   type_index;
   std::vector<int> tuple_lvalue_positions;
   // NOTE: suboptimal - copying the whole attribute vector
   std::stack<Lnast_node> rvalue_node_stack;

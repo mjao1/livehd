@@ -14,16 +14,16 @@ public:
   constexpr Ast_parser_node(const Rule_id rid, const Token_entry te) : rule_id(rid), token_entry(te) { I(rid); }
 };
 
-class Ast_parser : public lh::tree<Ast_parser_node> {
+class Ast_parser : public hhds::tree<Ast_parser_node> {
 private:
-protected:
-  lh::Tree_level         level;
-  lh::Tree_level         down_added;
-  const std::string_view buffer;  // const because it can not change at runtime
+  std::string_view         buffer;
+  hhds::Tree_pos          level;
+  hhds::Tree_pos          down_added;
 
-  std::vector<lh::Tree_index> last_added;
+  // Track last added node at each level
+  std::vector<hhds::Tree_pos> last_added;
 
-  void add_track_parent(const lh::Tree_index &index);
+  void add_track_parent(const hhds::Tree_pos &index);
 
 public:
   Ast_parser(std::string_view buffer, Rule_id top_rule);
@@ -34,6 +34,5 @@ public:
 
   void dump() const;
 
-  std::string_view get_memblock()
-      const;  // FIXME: memblock has to go. Support user provided strings (memblock should be inside lnast)
+  std::string_view get_memblock() const;  // FIXME: memblock has to go. Support user provided strings (memblock should be inside lnast)
 };

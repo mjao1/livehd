@@ -48,7 +48,7 @@ void Lnast_create::new_lnast(std::string_view name) {
   lnast->set_root(Lnast_node(Lnast_ntype::create_top()));
 
   auto node_stmts = Lnast_node::create_stmts();
-  idx_stmts       = lnast->add_child(lh::Tree_index::root(), node_stmts);
+  idx_stmts       = lnast->add_child(hhds::root(), node_stmts);
 
   vname2lname.clear();
 

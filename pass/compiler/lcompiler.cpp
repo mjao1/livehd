@@ -22,7 +22,7 @@ void Lcompiler::prp_thread_ln2lg(const std::shared_ptr<Lnast> &ln) {
 
   auto mod_name = ln->get_top_module_name();
   Lnast_tolg ln2lg(mod_name, path);
-  const auto top_stmts = ln->get_first_child(lh::Tree_index::root());
+  const auto top_stmts = ln->get_first_child(hhds::root());
   auto local_lgs = ln2lg.do_tolg(ln, top_stmts);
 
   if (gviz) {
@@ -147,7 +147,7 @@ void Lcompiler::fir_thread_ln2lg(const std::shared_ptr<Lnast> &ln) {
   auto mod_name = absl::StrCat("__firrtl_", ln->get_top_module_name());
   Lnast_tolg ln2lg(mod_name, path);
 
-  auto top_stmts = ln->get_first_child(lh::Tree_index::root());
+  auto top_stmts = ln->get_first_child(hhds::root());
   auto local_lgs = ln2lg.do_tolg(ln, top_stmts);
 
   if (gviz) {

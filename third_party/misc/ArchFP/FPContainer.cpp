@@ -126,14 +126,14 @@ double FPContainer::totalArea() {
   return area;
 }
 
-unsigned int FPContainer::outputLgraphLayout(Node_tree& tree, lh::Tree_index tidx, double startX, double startY) {
+unsigned int FPContainer::outputLgraphLayout(Node_tree& tree, hhds::Tree_pos pos, double startX, double startY) {
   pushMirrorContext(startX, startY);
 
   unsigned int total = 0;
 
   for (auto i = 0u; i < getComponentCount(); i++) {
     FPObject* obj = getComponent(i);
-    total += obj->findNode(tree, tidx, x + startX, y + startY);
+    total += obj->findNode(tree, pos, x + startX, y + startY);
   }
 
   popMirrorContext();

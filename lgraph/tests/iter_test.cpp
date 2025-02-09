@@ -725,7 +725,7 @@ int main(int argc, char **argv) {
     }
 #endif
 #ifdef ITER_TREE
-    lh::tree<Node::Compact_class> fwd_order;
+    hhds::tree<Node::Compact_class> fwd_order;
     Node                          invalid;
     fwd_order.set_root(invalid.get_compact_class());
 
@@ -780,7 +780,7 @@ int main(int argc, char **argv) {
       }
 #endif
 #ifdef ITER_TREE
-      for (const auto &it : fwd_order.depth_preorder()) {
+      for (const auto &it : fwd_order.pre_order()) {
         auto node = fwd_order.get_data(it).get_node(lg);
         auto op   = node.get_type_op();
         if (Ntype::is_multi_driver(op))

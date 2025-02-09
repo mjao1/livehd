@@ -10,19 +10,19 @@
 Node_hier_floorp::Node_hier_floorp(Node_tree&& nt_arg) : Lhd_floorplanner(std::move(nt_arg)) {}
 
 FPContainer* Node_hier_floorp::load_lg_nodes(const absl::flat_hash_map<Node::Compact, GeographyHint>& hint_map, Lgraph* lg,
-                                             const lh::Tree_index tidx) {
+                                             const hhds::Tree_pos pos) {
   /*
     It would be very nice if we could skip floorplanning for nodes that have already been loaded into ArchFP elsewhere.
     However, ArchFP does not support calling addComponent more than once on the same pointer, so we are forced to deep copy repeated
     subgraphs.
   */
 
-  FPContainer* l = makeNode(hint_map, tidx, lg->size());
+  FPContainer* l = makeNode(hint_map, pos, lg->size());
 
   // count instances of leaves and subnodes for later use
   absl::flat_hash_map<Lgraph*, unsigned int>  sub_lg_count;
   absl::flat_hash_map<Ntype_op, unsigned int> grid_count;
-  for (auto child_idx : nt.children(tidx)) {
+  for (auto child_idx : nt.children(pos)) {
     const Node& child = nt.get_data(child_idx);
     if (child.is_type_sub_present()) {
       const auto child_lg = root_lg->ref_library()->open_lgraph(child.get_type_sub());
@@ -33,7 +33,7 @@ FPContainer* Node_hier_floorp::load_lg_nodes(const absl::flat_hash_map<Node::Com
   }
 
   absl::flat_hash_set<Ntype_op> skip;
-  for (auto child_idx : nt.children(tidx)) {
+  for (auto child_idx : nt.children(pos)) {
     const Node& child = nt.get_data(child_idx);
 
     if (child.is_type_sub_present()) {
@@ -102,6 +102,6 @@ FPContainer* Node_hier_floorp::load_lg_nodes(const absl::flat_hash_map<Node::Com
 
 void Node_hier_floorp::load() {
   absl::flat_hash_map<Node::Compact, GeographyHint> hint_map;
-  root_layout = load_lg_nodes(hint_map, root_lg, lh::Tree_index::root());
+  root_layout = load_lg_nodes(hint_map, root_lg, hhds::root());
   I(root_layout);
 }

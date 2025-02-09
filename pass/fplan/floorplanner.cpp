@@ -46,9 +46,9 @@ GeographyHint Lhd_floorplanner::randomHint(int count) const {
 }
 
 FPContainer* Lhd_floorplanner::makeNode(const absl::flat_hash_map<Node::Compact, GeographyHint>& hint_map,
-                                        const lh::Tree_index tidx, size_t size) {
+                                        const hhds::Tree_pos pos, size_t size) {
   FPContainer* l;
-  if (!tidx.is_root() && hint_map.contains(nt.get_data(tidx).get_compact())) {
+  if (!pos.is_root() && hint_map.contains(nt.get_data(pos).get_compact())) {
     l = new geogLayout(size);
   } else {
     l = new annLayout(size);
@@ -109,7 +109,7 @@ void Lhd_floorplanner::write_lhd_node() {
   nt.get_root_lg()->ref_node_place_map()->clear();  // clear out any existing node placements
   clearCount();                                     // clear ArchFP name counts
 
-  unsigned int placed_nodes = root_layout->outputLgraphLayout(nt, lh::Tree_index::root());
+  unsigned int placed_nodes = root_layout->outputLgraphLayout(nt, hhds::root());
 
   unsigned int node_count = 0;
   for (const auto n : root_lg->fast(true)) {

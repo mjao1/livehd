@@ -300,7 +300,7 @@ void Graphviz::populate_lg_data(Lgraph *g, std::string_view dot_postfix) {
 void Graphviz::do_from_lnast(const std::shared_ptr<Lnast> &lnast, std::string_view dot_postfix) {
   std::string data = "digraph {\n";
 
-  for (const auto &itr : lnast->depth_preorder()) {
+  for (const auto &itr : lnast->pre_order()) {
     auto node_data = lnast->get_data(itr);
 
     auto subs = node_data.subs;

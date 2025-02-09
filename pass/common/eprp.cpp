@@ -251,7 +251,7 @@ void Eprp::elaborate() {
   pipe.run();
 }
 
-void Eprp::process_ast_handler(const lh::Tree_index &self, const Ast_parser_node &node) {
+void Eprp::process_ast_handler(const hhds::Tree_pos &self, const Ast_parser_node &node) {
   auto txt = scan_text(node.token_entry);
   fmt::print("level:{} pos:{} te:{} rid:{} txt:{}\n", self.level, self.pos, (int)node.token_entry, (int)node.rule_id, txt);
 
@@ -275,7 +275,7 @@ void Eprp::process_ast_handler(const lh::Tree_index &self, const Ast_parser_node
 }
 
 void Eprp::process_ast() {
-  for (const auto &ti : ast->depth_preorder()) {
+  for (const auto &ti : ast->pre_order()) {
     fmt::print("ti.level:{} ti.pos:{}\n", ti.level, ti.pos);
   }
 

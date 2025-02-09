@@ -33,7 +33,7 @@ public:
   }
 
   void ast_handler() {
-    for (const auto &it : ast->depth_preorder()) {
+    for (const auto &it : ast->pre_order()) {
       auto        node       = ast->get_data(it);
       auto        rule_value = node.rule_id;
       std::string rule_name;

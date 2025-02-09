@@ -7,17 +7,17 @@
 #include "lgraph.hpp"
 
 Node_tree::Node_tree(Lgraph* root_arg)
-    : lh::tree<Node>(root_arg->get_path(), absl::StrCat(root_arg->get_name(), "_ntree")), root(root_arg), last_free() {
+    : hhds::tree<Node>(root_arg->get_path(), absl::StrCat(root_arg->get_name(), "_ntree")), root(root_arg), last_free() {
   set_root(Node());
 
 #if 1
   assert(false);  // TO DEPRECATE SOON
 #else
   absl::flat_hash_set<Hierarchy_index>                      hidx_used;
-  std::function<void(Lgraph*, Hierarchy_index, Tree_index)> add_lg_nodes = [&](Lgraph* lg, Hierarchy_index hidx, Tree_index tidx) {
+  std::function<void(Lgraph*, Hierarchy_index, Tree_pos)> add_lg_nodes = [&](Lgraph* lg, Hierarchy_index hidx, Tree_pos pos) {
     auto ht = root->ref_htree();
 
-    Tree_index last_sib;
+    Tree_pos last_sib;
     for (auto fn : lg->fast()) {
       if (!fn.is_type_synth() && !fn.is_type_sub_present()) {
         continue;
@@ -25,9 +25,9 @@ Node_tree::Node_tree(Lgraph* root_arg)
 
       auto cn = Node(root, hidx, fn.get_compact_class());
 
-      Tree_index tree_cidx;  // current child index in tree
+      Tree_pos tree_cidx;  // current child index in tree
       if (last_sib.is_invalid()) {
-        tree_cidx = add_child(tidx, cn);
+        tree_cidx = add_child(pos, cn);
       } else {
         tree_cidx = insert_next_sibling(last_sib, cn);
       }
@@ -67,7 +67,7 @@ Node_tree::Node_tree(Lgraph* root_arg)
 
         I(found);
       } else {
-        auto& p = last_free[tidx][size_t(cn.get_type_op()) - 1];
+        auto& p = last_free[pos][size_t(cn.get_type_op()) - 1];
         if (p.is_invalid()) {
           p = last_sib;
         }
@@ -79,12 +79,12 @@ Node_tree::Node_tree(Lgraph* root_arg)
     }
   };
 
-  add_lg_nodes(root, Hierarchy_index(0, 0), Tree_index(0, 0));
+  add_lg_nodes(root, Hierarchy_index(0, 0), Tree_pos(0, 0));
 #endif
 }
 
 void Node_tree::dump() const {
-  for (const auto& index : depth_preorder()) {
+  for (const auto& index : pre_order()) {
     std::string indent(index.level, ' ');
     const auto& id = get_data(index);
 

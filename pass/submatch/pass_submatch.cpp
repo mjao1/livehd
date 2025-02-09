@@ -46,12 +46,12 @@ uint64_t pass_submatch::hash_mffc_root(Node n) { return hash_node(n); }
 
 uint64_t pass_submatch::hash_mffc_node(Node n_driver, uint64_t h_sink, Port_ID pid) {
   uint64_t i_hash[3] = {h_sink, hash_node(n_driver), static_cast<uint64_t>(pid)};
-  return lh::woothash64(i_hash, 24);
+  return hhds::woothash64(i_hash, 24);
 }
 
 uint64_t pass_submatch::hash_mffc_leaf(uint64_t h_sink, Port_ID pid) {
   uint64_t i_hash[2] = {h_sink, static_cast<uint64_t>(pid)};
-  return lh::woothash64(i_hash, 16);
+  return hhds::woothash64(i_hash, 16);
 }
 
 uint64_t pass_submatch::hash_node(Node n) {
@@ -61,8 +61,8 @@ uint64_t pass_submatch::hash_node(Node n) {
   for (auto e : n.inp_edges()) {
     i_hash.push_back(static_cast<uint16_t>(e.sink.get_pid()));
   }
-  h = lh::woothash64(i_hash.data(), i_hash.size() * 2);
-  h = lh::woothash64(&h, 8, static_cast<uint64_t>(n.get_type_op()) & 0xFFFF);
+  h = hhds::woothash64(i_hash.data(), i_hash.size() * 2);
+  h = hhds::woothash64(&h, 8, static_cast<uint64_t>(n.get_type_op()) & 0xFFFF);
   return h;
 }
 
@@ -155,7 +155,7 @@ void pass_submatch::find_mffc_group(Lgraph *g) {
         break;
       }
       std::sort(i_hash.begin(), i_hash.end());
-      uint64_t h_mffc = lh::woothash64(i_hash.data(), i_hash.size() * 8);
+      uint64_t h_mffc = hhds::woothash64(i_hash.data(), i_hash.size() * 8);
       h_mffc ^= mffc_depth_tree[id].back().h;
       mffc_depth_tree[id].push_back({h_mffc, mffc_size});
       max_mffc_depth = std::max(max_mffc_depth, mffc_depth);
@@ -252,9 +252,9 @@ void pass_submatch::find_subs(Lgraph *g) {
         break;
       }
       std::sort(i_hash.begin(), i_hash.end());
-      uint64_t h = lh::woothash64(i_hash.data(), i_hash.size() * 8);
+      uint64_t h = hhds::woothash64(i_hash.data(), i_hash.size() * 8);
       uint64_t n = static_cast<uint64_t>(node.get_type_op());
-      h          = lh::waterhash(&n, 4, h & 0xFFFF);
+      h          = hhds::waterhash(&n, 4, h & 0xFFFF);
       if (depth == 0) {
         node2depth_hash[node.get_compact()] = {h};
       } else {
@@ -287,7 +287,7 @@ void pass_submatch::find_subs(Lgraph *g) {
     Node     node       = Node(g, compact_node);
     uint64_t pid;
     uint64_t n                     = static_cast<uint64_t>(node.get_type_op());
-    uint64_t h                     = lh::woothash64(&n, 8);
+    uint64_t h                     = hhds::woothash64(&n, 8);
     node2height_hash[compact_node] = {Root_hash(compact_node, h)};
     for (uint64_t height = 1; has_output; ++height) {
       has_output = false;
@@ -306,7 +306,7 @@ void pass_submatch::find_subs(Lgraph *g) {
         break;
       }
       h ^= node2depth_hash[node.get_compact()][height - 1];
-      h = lh::waterhash(&h, 4, pid & 0xFFFF);
+      h = hhds::waterhash(&h, 4, pid & 0xFFFF);
       node2height_hash[compact_node].emplace_back(Root_hash(node.get_compact(), h));
 
       if (height_hash2node.size() < height) {

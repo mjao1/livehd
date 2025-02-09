@@ -31,7 +31,7 @@ protected:
   std::unique_ptr<Lnast>    lnast;
   std::shared_ptr<Hif_read> rd;
 
-  std::stack<lh::Tree_index> tree_index;
+  std::stack<hhds::Tree_pos> tree_pos;
 
   Hif_read::Statement cur_stmt;
 
@@ -64,21 +64,21 @@ protected:
       }
     }
     if (cur_stmt.is_end()) {
-      tree_index.pop();
+      tree_pos.pop();
       return;
     }
     auto           n = Lnast_node(Lnast_ntype(static_cast<Lnast_ntype::Lnast_ntype_int>(cur_stmt.type & 0x00FF)),
                         State_token(0, pos1, pos2, 0, cur_stmt.instance, fname));
-    lh::Tree_index i;
+    hhds::Tree_pos i;
     if (is_top) {
       lnast->set_root(n);
-      i      = lh::Tree_index::root();
+      i      = hhds::root();
       is_top = false;
     } else {
-      i = lnast->add_child(tree_index.top(), n);
+      i = lnast->add_child(tree_pos.top(), n);
     }
     if (cur_stmt.is_open_call()) {
-      tree_index.push(i);
+      tree_pos.push(i);
     }
   }
 };

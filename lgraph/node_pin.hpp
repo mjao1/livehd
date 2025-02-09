@@ -95,7 +95,7 @@ public:
       return H::combine(std::move(h), s.hidx, s.idx, s.sink);
     };
 
-    [[nodiscard]] uint64_t get_hash() const { return lh::woothash64(this, sizeof(Compact)); }
+    [[nodiscard]] uint64_t get_hash() const { return hhds::woothash64(this, sizeof(Compact)); }
   };
   class __attribute__((packed)) Compact_flat {
   protected:
@@ -143,7 +143,7 @@ public:
     friend H AbslHashValue(H h, const Compact_flat &s) {
       return H::combine(std::move(h), s.lgid, s.idx, s.sink);
     };
-    [[nodiscard]] uint64_t get_hash() const { return lh::woothash64(this, sizeof(Compact_flat)); }
+    [[nodiscard]] uint64_t get_hash() const { return hhds::woothash64(this, sizeof(Compact_flat)); }
   };
 
   class __attribute__((packed)) Compact_driver {
@@ -186,7 +186,7 @@ public:
     friend H AbslHashValue(H h, const Compact_driver &s) {
       return H::combine(std::move(h), s.hidx, s.idx);
     };
-    [[nodiscard]] uint64_t get_hash() const { return lh::woothash64(this, sizeof(Compact_driver)); }
+    [[nodiscard]] uint64_t get_hash() const { return hhds::woothash64(this, sizeof(Compact_driver)); }
   };
 
   class __attribute__((packed)) Compact_class {
@@ -228,7 +228,7 @@ public:
     friend H AbslHashValue(H h, const Compact_class &s) {
       return H::combine(std::move(h), s.idx, s.sink);
     }
-    [[nodiscard]] uint64_t get_hash() const { return lh::woothash64(this, sizeof(Compact_class)); }
+    [[nodiscard]] uint64_t get_hash() const { return hhds::woothash64(this, sizeof(Compact_class)); }
   };
 
   class __attribute__((packed)) Compact_class_driver {
@@ -267,7 +267,7 @@ public:
     friend H AbslHashValue(H h, const Compact_class_driver &s) {
       return H::combine(std::move(h), s.idx);
     }
-    [[nodiscard]] uint64_t get_hash() const { return lh::woothash64(this, sizeof(Compact_class_driver)); }
+    [[nodiscard]] uint64_t get_hash() const { return hhds::woothash64(this, sizeof(Compact_class_driver)); }
   };
 
   template <typename H>

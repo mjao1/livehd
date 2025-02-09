@@ -143,7 +143,7 @@ void Semantic_check::error_print_lnast_by_name(Lnast *lnast, std::string_view er
   bool      printed = false;
   fmt::print("\n");
 
-  for (const auto &it : lnast->depth_preorder()) {
+  for (const auto &it : lnast->pre_order()) {
     auto node = lnast->get_data(it);
 
     std::string indent(2 * (it.level + 1), ' ');
@@ -166,7 +166,7 @@ void Semantic_check::error_print_lnast_by_type(Lnast *lnast, std::string_view er
   bool      printed = false;
   fmt::print("\n");
 
-  for (const auto &it : lnast->depth_preorder()) {
+  for (const auto &it : lnast->pre_order()) {
     const auto &node = lnast->get_data(it);
 
     std::string indent(2 * (it.level + 1), ' ');
@@ -190,7 +190,7 @@ void Semantic_check::error_print_lnast_var_warn(Lnast *lnast, std::vector<std::s
   bool      printed = false;
   fmt::print("\n");
 
-  for (const auto &it : lnast->depth_preorder()) {
+  for (const auto &it : lnast->pre_order()) {
     auto node = lnast->get_data(it);
 
     std::string indent(2 * (it.level + 1), ' ');
@@ -797,7 +797,7 @@ void Semantic_check::check_func_call(Lnast *lnast, const Lnast_nid &lnidx_opr, s
 // NOTE: Test does only consider tuple and tuple concat operations
 void Semantic_check::do_check(Lnast *lnast) {
   // Get Lnast Root
-  const auto stmts = lnast->get_first_child(lh::Tree_index::root());
+  const auto stmts = lnast->get_first_child(hhds::root());
   // Iterate through Lnast top statements
   for (const auto &stmt : lnast->children(stmts)) {
     const auto ntype     = lnast->get_data(stmt).type;

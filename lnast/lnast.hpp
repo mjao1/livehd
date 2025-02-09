@@ -10,7 +10,7 @@
 "include "tree.hpp"
 #include "lnast_ntype.hpp"
 
-using Lnast_nid                     = lh::Tree_index;
+using Lnast_nid                     = hhds::Tree_pos;
 using Phi_rtable                    = absl::flat_hash_map<std::string, Lnast_nid>;  // rtable = resolve_table
 using Cnt_rtable                    = absl::flat_hash_map<std::string, int16_t>;
 using Selc_lrhs_table               = absl::flat_hash_map<Lnast_nid, std::pair<bool, Lnast_nid>>;  // sel -> (lrhs, paired opr node)
@@ -73,7 +73,7 @@ struct Lnast_node {
   }
 };
 
-class Lnast : public lh::tree<Lnast_node> {
+class Lnast : public hhds::tree<Lnast_node> {
 private:
   std::string top_module_name;
   std::string source_filename;
@@ -158,7 +158,7 @@ public:
       : top_module_name(_module_name), source_filename(_file_name) {}
 
   void ssa_trans() { 
-    do_ssa_trans(lh::Tree_index::root()); 
+    do_ssa_trans(hhds::root()); 
   };
 
   std::string_view get_top_module_name() const { return top_module_name; }

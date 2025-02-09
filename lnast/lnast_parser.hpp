@@ -26,7 +26,7 @@ protected:
   std::vector<Lnast_token> token_array;
 
   int                        token_index;
-  std::stack<lh::Tree_index> tree_index;
+  std::stack<hhds::Tree_pos> tree_pos;
 
   void read_all_tokens() {
     do {
@@ -45,14 +45,14 @@ protected:
   }
   inline void rewind_token() { --token_index; }
 
-  void add_leaf(Lnast_node n) { lnast->add_child(tree_index.top(), n); }
+  void add_leaf(Lnast_node n) { lnast->add_child(tree_pos.top(), n); }
 
   void start_tree(Lnast_node n) {
-    auto i = lnast->add_child(tree_index.top(), n);
-    tree_index.push(i);
+    auto i = lnast->add_child(tree_pos.top(), n);
+    tree_pos.push(i);
   }
 
-  void end_tree() { tree_index.pop(); }
+  void end_tree() { tree_pos.pop(); }
 
   void error() {
     // TODO: Populate error handling/diagnostic code

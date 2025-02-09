@@ -39,9 +39,9 @@ void Pass_lnastfmt::parse_ln(const std::shared_ptr<Lnast>& ln, Eprp_var& var, st
   // now we will make the formatted LNAST:
   lnastfmted->set_root(
       Lnast_node(Lnast_ntype::create_top(), State_token(0, 0, 0, 0, ln->get_top_module_name())));  // root node of lnfmted
-  const auto& stmt_index = ln->get_child(lh::Tree_index::root());                                  // stmt node of ln
+  const auto& stmt_index = ln->get_child(hhds::root());                                  // stmt node of ln
   const auto& stmt_index_fmt
-      = lnastfmted->add_child(lh::Tree_index::root(),
+      = lnastfmted->add_child(hhds::root(),
                               duplicate_node(lnastfmted, ln, stmt_index));  // stmt node of lnfmted (copied from ln)
 
   auto curr_index = ln->get_child(stmt_index);  // 1st child of ln after stmt
@@ -52,7 +52,7 @@ void Pass_lnastfmt::parse_ln(const std::shared_ptr<Lnast>& ln, Eprp_var& var, st
     // check if curr_index's child is leaf child?
     // const auto& leaf_child_check = ln->get_child(curr_index);
     bool all_are_leaves = true;
-    for (const lh::Tree_index& it : ln->children(curr_index)) {
+    for (const hhds::Tree_pos& it : ln->children(curr_index)) {
       // fmt::print("PARSING TO CHECK LEAVES:   {}:{}\n",ln->get_name(it), it.level );
       if (!(ln->is_leaf(it))) {
         all_are_leaves = false;
@@ -86,7 +86,7 @@ void Pass_lnastfmt::parse_ln(const std::shared_ptr<Lnast>& ln, Eprp_var& var, st
       if (curr_index != ln->invalid_index() && !curr_incremented) {
         auto curr_index_fmt = lnastfmted->add_child(stmt_index_fmt, duplicate_node(lnastfmted, ln, curr_index));
 
-        for (const lh::Tree_index& it : ln->children(curr_index)) {
+        for (const hhds::Tree_pos& it : ln->children(curr_index)) {
           auto is = ref_hash_map.find(ln->get_name(it));
           if (is != ref_hash_map.end() && is_ssa(ln->get_name(it))) {
             // auto frst_fmt =
@@ -101,7 +101,7 @@ void Pass_lnastfmt::parse_ln(const std::shared_ptr<Lnast>& ln, Eprp_var& var, st
       auto curr_index_fmt = lnastfmted->add_child(stmt_index_fmt, duplicate_node(lnastfmted, ln, curr_index));
       auto curr_lev       = curr_index.level;
       auto curr_pos       = curr_index.pos;
-      for (const lh::Tree_index& it : ln->depth_preorder(curr_index)) {
+      for (const hhds::Tree_pos& it : ln->depth_preorder(curr_index)) {
         //        if (((it.level == curr_index.level) && (it.pos > curr_index.pos)) || (it.level < curr_index.level)) {
         //         break;
         //       }//This if is needed because depth preorder traverses the next subtree as well. It does not stop after traversing
@@ -171,7 +171,7 @@ void Pass_lnastfmt::parse_ln(const std::shared_ptr<Lnast>& ln, Eprp_var& var, st
 }
 
 void Pass_lnastfmt::observe_lnast(Lnast* ln) {
-  for (const lh::Tree_index& it : ln->depth_preorder()) {
+  for (const hhds::Tree_pos& it : ln->pre_order()) {
     process_node(ln, it);
   }
 
@@ -181,7 +181,7 @@ void Pass_lnastfmt::observe_lnast(Lnast* ln) {
   }
 }
 
-void Pass_lnastfmt::process_node(Lnast* ln, const lh::Tree_index& it) {
+void Pass_lnastfmt::process_node(Lnast* ln, const hhds::Tree_pos& it) {
   const auto& node_data = ln->get_data(it);
 
   if (node_data.type.is_assign() || node_data.type.is_dp_assign()) {
@@ -205,7 +205,7 @@ bool Pass_lnastfmt::is_temp_var(std::string_view test_string) {
 bool Pass_lnastfmt::is_ssa(std::string_view test_string) { return test_string.substr(0, 2) != "__"; }
 
 Lnast_node Pass_lnastfmt::duplicate_node(std::shared_ptr<Lnast>& lnastfmted, const std::shared_ptr<Lnast>& ln,
-                                         const lh::Tree_index& it) {
+                                         const hhds::Tree_pos& it) {
   (void)lnastfmted;
   // auto orig_node_token = ln->get_token(it);
   // auto orig_node_subs = ln->get_subs(it);

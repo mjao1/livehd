@@ -8,7 +8,7 @@
 
 #include "benchmark/benchmark.h"
 
-#include "core/lhtree.hpp"
+#include "core/tree.hpp"
 #include "eprp_var.hpp"
 
 #include "lnast/lnast_writer.hpp"
@@ -109,7 +109,7 @@ BENCHMARK_F(LgraphTestFixture, LGRAPH_HIF)(benchmark::State& st) {
   auto lnast = read_ln("benchmark/ln/iwls_adder.ln");
   auto ln_to_lg = Lnast_tolg("benchmark", "");
   for (auto _ : st) {
-    auto lgs = ln_to_lg.do_tolg(lnast, lh::Tree_index::root());
+    auto lgs = ln_to_lg.do_tolg(lnast, hhds::root());
     lgs[0]->save("BM_LGRAPH_HIF");
   }
 }

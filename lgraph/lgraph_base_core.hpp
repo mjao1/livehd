@@ -22,7 +22,11 @@ using Lg_type_id  = Explicit_type<Lg_id_t, struct Lg_type_id_struct, 0>;  // Glo
 using Index_id    = Explicit_type<Lg_id_t, struct Index_id_struct, 0>;
 using Lut_type_id = Explicit_type<Lg_id_t, struct Lut_type_id_struct, 0>;
 
-using Hierarchy_index = int32_t;  // -1 is invalid, 0 is root
+using Hierarchy_index = hhds::Tree_pos;
+
+// Constants for the hierarchy index
+constexpr int Index_bits     = std::numeric_limits<Lg_id_t>::digits - 1;
+constexpr int Max_table_size = 1 << Index_bits;
 
 struct Lg_type_id_hash {
   size_t operator()(const Lg_type_id& obj) const { return obj.value; }
@@ -35,7 +39,6 @@ struct Index_id_hash {
 constexpr Index_id Hardcoded_input_nid  = 1;
 constexpr Index_id Hardcoded_output_nid = 2;
 
-constexpr int Index_bits     = std::numeric_limits<Lg_id_t>::digits - 1;  // 31 bit to have Sink/Driver + Index in 32 bits
 constexpr int LUT_input_bits = 4;
 
 class Graph_library;

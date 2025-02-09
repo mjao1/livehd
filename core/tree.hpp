@@ -952,7 +952,37 @@ public:
     return pointers_stack[pos >> CHUNK_SHIFT].get_subtree_ref();
   }
 
-  // :public
+  // compatibility layer for lhtree.hpp
+  using Tree_level = int16_t;
+  using Tree_index = Tree_pos;
+
+  // compatibility functions
+  static constexpr Tree_pos invalid_index() { return INVALID; }
+  static constexpr Tree_pos root() { return ROOT; }
+  
+  // direct mappings
+  // get_parent()
+  // get_first_child() 
+  // get_last_child()
+  // get_sibling_next()
+  // get_sibling_prev()
+  // is_leaf()
+  // is_first_child()
+  // is_last_child()
+  // add_child()
+  // append_sibling()
+  // insert_next_sibling()
+  // delete_leaf()
+  // delete_subtree()
+
+  // compatibility iterator methods
+  auto depth_preorder(const Tree_pos& start = ROOT) const { return pre_order(start); }
+  auto depth_postorder(const Tree_pos& start = ROOT) const { return post_order(start); }
+  auto siblings(const Tree_pos& start) const { return sibling_order(start); }
+  auto children(const Tree_pos& parent) const {
+    auto first = get_first_child(parent);
+    return sibling_order(first);
+  }
 
 };  // tree class
 

@@ -8,8 +8,8 @@
 class Pass_fplan_analyzefp : public Pass {
 private:
   std::string safe_name(const Node& n) const;
-  void        print_area(const Node_tree& nt, const lh::Tree_index& tidx) const;
-  void        print_children(const Node_tree& nt, const lh::Tree_index& tidx) const;
+  void        print_area(const Node_tree& nt, const hhds::Tree_pos& pos) const;
+  void        print_children(const Node_tree& nt, const hhds::Tree_pos& pos) const;
 
 public:
   Pass_fplan_analyzefp(const Eprp_var& var);

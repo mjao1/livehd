@@ -18,7 +18,7 @@ void Inou_firrtl::toFIRRTL(Eprp_var &var) {
 
   for (const auto &lnast : var.lnasts) {
     p.do_tofirrtl(lnast, circuit);
-    std::string n(lnast->get_name(lh::Tree_index::root()));
+    std::string n(lnast->get_name(hhds::root()));
 
     top_msg->set_name(n);  // FIXME: Placeholder for now, need to figure out which LNAST is "top"
   }
@@ -38,7 +38,7 @@ void Inou_firrtl::do_tofirrtl(const std::shared_ptr<Lnast> &ln, firrtl::FirrtlPB
   name_to_range_map.clear();
   dot_map.clear();
 
-  constexpr auto top   = lh::Tree_index::root();
+  constexpr auto top   = hhds::root();
   const auto     stmts = ln->get_first_child(top);
   std::string    top_name(ln->get_name(top));
 

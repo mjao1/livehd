@@ -1299,7 +1299,7 @@ void Lnast_tolg::process_ast_attr_set_op(Lgraph *lg, const Lnast_nid &lnidx_aset
   aset_node.set_loc(tok2.pos1, tok2.pos2);
   aset_node.set_source(tok2.fname);
 
-  lh::Tree_index val_aset;
+  hhds::Tree_pos val_aset;
 
   {
     // Get the field[s] foo.bar.xxx.__tree = 3 -> field = "bar.xxx.__tree"

@@ -3040,7 +3040,7 @@ void Inou_firrtl::user_module_to_lnast(Eprp_var& var, const firrtl::FirrtlPB_Mod
   const firrtl::FirrtlPB_Module_UserModule& user_module = fmodule.user_module();
 
   lnast->set_root(Lnast_node::create_top());
-  auto idx_stmts = lnast->add_child(lh::Tree_index::root(), Lnast_node::create_stmts());
+  auto idx_stmts = lnast->add_child(hhds::root(), Lnast_node::create_stmts());
 
   // Iterate over I/O of the module.
   for (int i = 0; i < user_module.port_size(); i++) {
@@ -3072,7 +3072,7 @@ void Inou_firrtl::ext_module_to_lnast(Eprp_var& var, const firrtl::FirrtlPB_Modu
   const firrtl::FirrtlPB_Module_ExternalModule& ext_module = fmodule.external_module();
 
   lnast->set_root(Lnast_node::create_top());
-  auto idx_stmts = lnast->add_child(lh::Tree_index::root(), Lnast_node::create_stmts());
+  auto idx_stmts = lnast->add_child(hhds::root(), Lnast_node::create_stmts());
 
   // Iterate over I/O of the module.
   for (int i = 0; i < ext_module.port_size(); i++) {

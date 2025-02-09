@@ -85,7 +85,7 @@ void gridLayout::outputHotSpotLayout(std::ostream& o, double startX, double star
   o << "# end " << GridName << "\n";
 }
 
-unsigned int gridLayout::outputLGraphLayout(Node_tree& tree, lh::Tree_index tidx, double startX, double startY) {
+unsigned int gridLayout::outputLGraphLayout(Node_tree& tree, hhds::Tree_pos pos, double startX, double startY) {
   if (getComponentCount() != 1) {
     throw std::invalid_argument("Attempt to output a grid with other than one component.\n");
   }
@@ -103,7 +103,7 @@ unsigned int gridLayout::outputLGraphLayout(Node_tree& tree, lh::Tree_index tidx
     for (int j = 0; j < xCount; j++) {
       double cx = (j * compWidth) + x + startX;
 
-      total += obj->findNode(tree, tidx, cx, cy);
+      total += obj->findNode(tree, pos, cx, cy);
 
       compNum += 1;
     }

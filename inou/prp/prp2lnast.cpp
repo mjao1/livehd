@@ -96,7 +96,7 @@ void Prp2lnast::dump() const {
 void Prp2lnast::process_description() {
   auto tc = ts_tree_cursor_new(ts_root_node);
 
-  stmts_index = lnast->add_child(lh::Tree_index::root(), Lnast_node::create_stmts());
+  stmts_index = lnast->add_child(hhds::root(), Lnast_node::create_stmts());
   type_index  = stmts_index;
 
   bool go_next = ts_tree_cursor_goto_first_child(&tc);

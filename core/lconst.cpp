@@ -72,7 +72,7 @@ uint64_t Lconst::hash() const {
 
   boost::multiprecision::export_bits(num, std::back_inserter(v), 64);
 
-  return lh::woothash64(v.data(), v.size() * 8);
+  return hhds::woothash64(v.data(), v.size() * 8);
 }
 
 Lconst::Lconst(absl::Span<unsigned char> v) {

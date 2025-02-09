@@ -31,24 +31,24 @@ public:
            std::string_view _odir);
   // virtual void generate() = 0;
   void generate();
-  void do_stmts(const lh::Tree_index& stmt_node_index);
-  void do_assign(const lh::Tree_index& assign_node_index, std::vector<std::string>& hier_tup_vec, bool hier_tup_assign = false);
-  void do_for(const lh::Tree_index& assign_node_index);
-  void do_while(const lh::Tree_index& assign_node_index);
-  void do_op(const lh::Tree_index& op_node_index, std::string_view op_type);
-  void do_dot(const lh::Tree_index& dot_node_index, std::string_view select_type);
-  void do_if(const lh::Tree_index& dot_node_index);
-  void do_cond(const lh::Tree_index& cond_node_index);
-  void do_tuple(const lh::Tree_index& tuple_node_index);
-  void do_select(const lh::Tree_index& select_node_index, std::string_view select_type);
-  void do_func_def(const lh::Tree_index& func_def_node_index);
-  void do_func_call(const lh::Tree_index& func_def_node_index);
-  void do_get_mask(const lh::Tree_index& tposs_node_index);
-  void do_set_mask(const lh::Tree_index& tposs_node_index);
-  void do_tposs(const lh::Tree_index& tposs_node_index);
+  void do_stmts(const hhds::Tree_pos& stmt_node_index);
+  void do_assign(const hhds::Tree_pos& assign_node_index, std::vector<std::string>& hier_tup_vec, bool hier_tup_assign = false);
+  void do_for(const hhds::Tree_pos& assign_node_index);
+  void do_while(const hhds::Tree_pos& assign_node_index);
+  void do_op(const hhds::Tree_pos& op_node_index, std::string_view op_type);
+  void do_dot(const hhds::Tree_pos& dot_node_index, std::string_view select_type);
+  void do_if(const hhds::Tree_pos& dot_node_index);
+  void do_cond(const hhds::Tree_pos& cond_node_index);
+  void do_tuple(const hhds::Tree_pos& tuple_node_index);
+  void do_select(const hhds::Tree_pos& select_node_index, std::string_view select_type);
+  void do_func_def(const hhds::Tree_pos& func_def_node_index);
+  void do_func_call(const hhds::Tree_pos& func_def_node_index);
+  void do_get_mask(const hhds::Tree_pos& tposs_node_index);
+  void do_set_mask(const hhds::Tree_pos& tposs_node_index);
+  void do_tposs(const hhds::Tree_pos& tposs_node_index);
 
-  std::string resolve_tuple_assign(const lh::Tree_index& tuple_assign_index);
-  std::string resolve_func_cond(const lh::Tree_index& func_cond_index);
+  std::string resolve_tuple_assign(const hhds::Tree_pos& tuple_assign_index);
+  std::string resolve_func_cond(const hhds::Tree_pos& func_cond_index);
 
   static bool is_temp_var(std::string_view test_string);      // can go to private/protected section!?
   static bool has_DblUndrScor(std::string_view test_string);  // can go to private/protected section!?

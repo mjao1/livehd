@@ -60,5 +60,5 @@ public:
   virtual void      addComponent(FPObject* comp, int count);
 
   // Writes current container and all subcontainers to the specified root lgraph
-  virtual unsigned int outputLgraphLayout(Node_tree& tree, lh::Tree_index tidx, double startX = 0.0, double startY = 0.0);
+  virtual unsigned int outputLgraphLayout(Node_tree& tree, hhds::Tree_pos pos, double startX = 0.0, double startY = 0.0);
 };

@@ -1879,7 +1879,7 @@ void Prp::elaborate() {
     // scan_text(term_token + base_token));
     PRINT_DBG_AST("base token: {}, term token: {}\n", base_token, term_token);
     PRINT_DBG_AST("terminal token: {}\n", scan_text(term_token + base_token));
-    ast_dump(lh::Tree_index::root());
+    ast_dump(hhds::root());
     fmt::print("Parsing error line {}\n", get_token(term_token + base_token).line + 1);
     err_tracker::logger("Parsing error line {}\n", get_token(term_token + base_token).line + 1);
     exit(1);
@@ -1977,7 +1977,7 @@ bool Prp::go_back(uint64_t num_tok) {
 }
 
 void Prp::ast_handler() {
-  for (const auto &it : ast->depth_preorder()) {
+  for (const auto &it : ast->pre_order()) {
     auto node       = ast->get_data(it);
     auto rule_name  = rule_id_to_string(node.rule_id);
     auto token_text = scan_text(node.token_entry);
@@ -1989,7 +1989,7 @@ void Prp::ast_handler() {
   }
 }
 
-void Prp::ast_dump(lh::Tree_index tree_idx) const {
+void Prp::ast_dump(hhds::Tree_pos tree_idx) const {
   for (const auto &index : ast->depth_preorder(tree_idx)) {
     const auto &d          = ast->get_data(index);
     auto        rule_name  = rule_id_to_string(d.rule_id);

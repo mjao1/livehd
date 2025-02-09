@@ -21,7 +21,7 @@ protected:
     std::string   name;
   };
 
-  lh::tree<Node_data> tree;
+  hhds::tree<Node_data> tree;
   std::vector<Node>   node_order;
   Lgraph             *lg_root;
 
@@ -32,9 +32,9 @@ protected:
   static constexpr char bwd_name[] = "bwd_pos";
 
   void map_tree_to_lgraph() {
-    std::vector<lh::Tree_index> index_order;
+    std::vector<hhds::Tree_pos> index_order;
 
-    tree.each_top_down_fast([&index_order](const lh::Tree_index &index, const Node_data &node) {
+    tree.pre_order([&index_order](const hhds::Tree_pos &index, const Node_data &node) {
       (void)node;
       // fmt::print(" level:{} pos:{} create_pos:{} fwd:{} bwd:{} leaf:{}\n", index.level, index.pos, node.create_pos, node.fwd_pos,
       // node.bwd_pos, node.leaf);
@@ -245,7 +245,7 @@ protected:
       level     = rint.max(max_level);
       I(level < max_depth);
 
-      lh::Tree_index index(level, rint.max(tree.get_tree_width(level)));
+      hhds::Tree_pos index(level, rint.max(tree.get_num_children(level)));
 
       Node_data data;
       data.create_pos = i + 1;
@@ -260,7 +260,7 @@ protected:
         tree.append_sibling(index, data);
         n_leafs++;
       } else {
-        // index.pos = tree.get_tree_width(index.level)-1; // Add child at the end
+        // index.pos = tree.get_num_children(index.level)-1; // Add child at the end
         if (!tree.is_leaf(index))
           n_leafs++;
 
@@ -273,7 +273,7 @@ protected:
 
     int pos = 0;
     n_leafs = 0;
-    for (auto index : tree.depth_preorder()) {
+    for (auto index : tree.pre_order()) {
       auto *data    = tree.ref_data(index);
       data->fwd_pos = pos;
       data->bwd_pos = size - pos;
@@ -291,8 +291,8 @@ protected:
 
     if (!unique) {
       for (int i = 0; i < size / 32; i++) {
-        lh::Tree_index insert_point(rint.max(max_level), rint.max(tree.get_tree_width(max_level)));
-        lh::Tree_index copy_point(rint.max(max_level), rint.max(tree.get_tree_width(max_level)));
+        hhds::Tree_pos insert_point(rint.max(max_level), rint.max(tree.get_num_children(max_level)));
+        hhds::Tree_pos copy_point(rint.max(max_level), rint.max(tree.get_num_children(max_level)));
 
         if (tree.is_child_of(copy_point, insert_point))  // No recursion insert
           continue;
