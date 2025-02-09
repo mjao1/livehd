@@ -3,7 +3,7 @@
 
 #include <string>
 #include "hif/hif_read.hpp"
-#include "lhtree.hpp"
+"include "tree.hpp"
 #include "lnast.hpp"
 #include "lnast_ntype.hpp"
 

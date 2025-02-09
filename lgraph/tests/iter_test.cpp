@@ -4,7 +4,7 @@
 
 #include "lgedgeiter.hpp"
 #include "lgraph.hpp"
-#include "lhtree.hpp"
+"include "tree.hpp"
 #include "perf_tracing.hpp"
 #include "spmc.hpp"
 #include "thread_pool.hpp"

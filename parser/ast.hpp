@@ -2,7 +2,7 @@
 #pragma once
 
 #include "elab_scanner.hpp"
-#include "lhtree.hpp"
+"include "tree.hpp"
 
 using Rule_id = int;  // FIXME explicit_type
 

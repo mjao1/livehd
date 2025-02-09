@@ -9,7 +9,7 @@
 #include <iostream>
 #include <stack>
 
-#include "lhtree.hpp"
+"include "tree.hpp"
 #include "lnast.hpp"
 #include "lnast_lexer.hpp"
 

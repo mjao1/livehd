@@ -7,7 +7,7 @@
 #include "gtest/gtest.h"
 #include "lgedgeiter.hpp"
 #include "lgraph.hpp"
-#include "lhtree.hpp"
+"include "tree.hpp"
 #include "lrand.hpp"
 
 class Tree_lgdb_setup : public ::testing::Test {

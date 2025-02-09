@@ -7,7 +7,7 @@
 #include "absl/strings/str_cat.h"
 
 #include "elab_scanner.hpp"
-#include "lhtree.hpp"
+"include "tree.hpp"
 #include "lnast_ntype.hpp"
 
 using Lnast_nid                     = lh::Tree_index;

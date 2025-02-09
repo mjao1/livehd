@@ -9,7 +9,7 @@
 #include <ostream>
 #include <stack>
 
-#include "lhtree.hpp"
+"include "tree.hpp"
 #include "lnast.hpp"
 
 class Lnast_writer {
