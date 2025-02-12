@@ -102,6 +102,6 @@ FPContainer* Node_hier_floorp::load_lg_nodes(const absl::flat_hash_map<Node::Com
 
 void Node_hier_floorp::load() {
   absl::flat_hash_map<Node::Compact, GeographyHint> hint_map;
-  root_layout = load_lg_nodes(hint_map, root_lg, hhds::root());
+  root_layout = load_lg_nodes(hint_map, root_lg, hhds::ROOT);
   I(root_layout);
 }

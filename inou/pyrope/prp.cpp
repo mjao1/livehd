@@ -1879,7 +1879,7 @@ void Prp::elaborate() {
     // scan_text(term_token + base_token));
     PRINT_DBG_AST("base token: {}, term token: {}\n", base_token, term_token);
     PRINT_DBG_AST("terminal token: {}\n", scan_text(term_token + base_token));
-    ast_dump(hhds::root());
+    ast_dump(hhds::ROOT);
     fmt::print("Parsing error line {}\n", get_token(term_token + base_token).line + 1);
     err_tracker::logger("Parsing error line {}\n", get_token(term_token + base_token).line + 1);
     exit(1);
@@ -1995,8 +1995,8 @@ void Prp::ast_dump(hhds::Tree_pos tree_idx) const {
     auto        rule_name  = rule_id_to_string(d.rule_id);
     auto        token_text = scan_text(d.token_entry);
 
-    std::string indent(index.level, ' ');
-    fmt::print("{} l:{} p:{} rule_id:{}/{} txt:{}\n", indent, index.level, index.pos, d.rule_id, rule_name, token_text);
+    std::string indent(ast->get_level(index), ' ');
+    fmt::print("{} l:{} p:{} rule_id:{}/{} txt:{}\n", indent, ast->get_level(index), ast->get_pos(index), d.rule_id, rule_name, token_text);
   }
 }
 

@@ -76,7 +76,7 @@ void Lnast::trans_tuple_opr(const Lnast_nid &psts_nid) {
       rename_to_real_tuple_name(psts_nid, opr_nid);
 #endif
     } else if (is_scalar_attribute_related(opr_nid)) {
-      auto selc_nid = opr_nid;
+      auto selc_nid = Lnast_nid(opr_nid);
       selc2attr_set_get(psts_nid, selc_nid);
     } else if (type.is_tuple_concat()) {
       merge_tconcat_paired_assign(psts_nid, opr_nid);
@@ -100,7 +100,7 @@ void Lnast::trans_tuple_opr_if_subtree(const Lnast_nid &if_nid) {
         if (type.is_if()) {
           trans_tuple_opr_if_subtree(opr_nid);
         } else if (is_scalar_attribute_related(opr_nid)) {
-          auto selc_nid = opr_nid;
+          auto selc_nid = Lnast_nid(opr_nid);
           selc2attr_set_get(itr_nid, selc_nid);
 #if 0
         } else if (type.is_select()) {
@@ -167,13 +167,12 @@ bool Lnast::is_scalar_attribute_related(const Lnast_nid &opr_nid) {
  $a __bits 0d4     ___t     0d4
 */
 
-void Lnast::selc2attr_set_get(const Lnast_nid &psts_nid, Lnast_nid &selc_nid) {
+void Lnast::selc2attr_set_get(const Lnast_nid &psts_nid, const Lnast_nid &selc_nid) {
   auto &selc_lrhs_table   = selc_lrhs_tables[psts_nid];
   auto  paired_assign_nid = selc_lrhs_table[selc_nid].second;
 
   auto c0_sel = get_first_child(selc_nid);
   auto c1_sel = get_sibling_next(c0_sel);
-  // auto c2_sel = get_sibling_next(c1_sel);
   if (get_name(c1_sel).substr(0, 3) == "___") {
     merge_hierarchical_attr_set(selc_nid);
     return;
@@ -188,25 +187,19 @@ void Lnast::selc2attr_set_get(const Lnast_nid &psts_nid, Lnast_nid &selc_nid) {
     auto it1_ast                      = c0_sel;
     auto it2_ast                      = get_sibling_next(it1_ast);
 
-    while (!it2_ast.is_invalid()) {
+    while (it2_ast != hhds::INVALID) {
       set_data(it1_ast, get_data(it2_ast));
       it1_ast = it2_ast;
       it2_ast = get_sibling_next(it2_ast);
     }
     set_data(it1_ast, get_data(c1_assign));
-
-    // set_data(c0_sel, get_data(c1_sel));
-    // set_data(c1_sel, get_data(c2_sel));
-    // set_data(c2_sel, get_data(c1_assign));
-    // set_data(c0_sel, get_data(c1_assign));
-
   } else {
     // is rhs, change node semantic from sel->attr_get
     ref_data(selc_nid)->type = Lnast_ntype::create_attr_get();
   }
 }
 
-void Lnast::merge_hierarchical_attr_set(Lnast_nid &selc_nid) {
+void Lnast::merge_hierarchical_attr_set(const Lnast_nid &selc_nid) {
   (void)selc_nid;
 #if 0
   I(get_type(selc_nid).is_select());
@@ -253,10 +246,8 @@ void Lnast::merge_hierarchical_attr_set(Lnast_nid &selc_nid) {
 #endif
 }
 
-void Lnast::collect_hier_tuple_nids(Lnast_nid &prev_selc_nid, std::stack<Lnast_nid> &stk_tuple_fields) {
+void Lnast::collect_hier_tuple_nids(const Lnast_nid &prev_selc_nid, std::stack<Lnast_nid> &stk_tuple_fields) {
   auto type = get_type(prev_selc_nid);
-  // note: the sel might be transform to tuple_get, but it's fine in this case, handle it as normal sel
-  // if (!type.is_select() && !type.is_tuple_get())
   if (!type.is_tuple_get()) {
     get_data(prev_selc_nid).dump();
     return;
@@ -267,14 +258,12 @@ void Lnast::collect_hier_tuple_nids(Lnast_nid &prev_selc_nid, std::stack<Lnast_n
   auto c2_sel = get_sibling_next(c1_sel);
 
   if (get_name(c1_sel).substr(0, 3) == "___") {
-    // midle of the hier_tuple, e.g., sel -> (___F10, ___F9, 0)
-    stk_tuple_fields.push(c2_sel);
+    stk_tuple_fields.push(Lnast_nid(c2_sel));
     auto sel_sibling = get_sibling_prev(prev_selc_nid);
-    collect_hier_tuple_nids(sel_sibling, stk_tuple_fields);
+    collect_hier_tuple_nids(Lnast_nid(sel_sibling), stk_tuple_fields);
   } else {
-    // head of the hier_tuple, e.g., sel -> (___F9, foo, bar)
-    stk_tuple_fields.push(c2_sel);
-    stk_tuple_fields.push(c1_sel);
+    stk_tuple_fields.push(Lnast_nid(c2_sel));
+    stk_tuple_fields.push(Lnast_nid(c1_sel));
   }
 
   ref_data(prev_selc_nid)->type = Lnast_ntype::create_invalid();
@@ -334,7 +323,7 @@ void Lnast::rename_to_real_tuple_name(const Lnast_nid &psts_nid, const Lnast_nid
   // auto is_1st_scope_ssa_tuple_var = update_tuple_var_1st_scope_ssa_table(psts_nid, get_first_child(shifted_tup_nid));
   // no need to create Tuple_chain asg if the chain is at top scope, the tuple_chain_asg is used for chaining tuple-chain across
   // different hierarchy scopes
-  if (get_parent(psts_nid).is_root())
+  if (get_parent(psts_nid) == hhds::ROOT)
     return;
 
   // insert tuple assignment across hier-scopes
@@ -403,7 +392,7 @@ void Lnast::sel2local_tuple_chain(const Lnast_nid &psts_nid, Lnast_nid &selc_nid
     // auto is_1st_scope_ssa_tuple_var = update_tuple_var_1st_scope_ssa_table(psts_nid, get_first_child(ta_nid));
     // no need to create Tuple_chain asg if the chain is at top scope, the tuple_chain_asg is used for chaining tuple-chain across
     // different hierarchy scopes
-    if (get_parent(psts_nid).is_root())
+    if (get_parent(psts_nid) == hhds::ROOT)
       return;
 
     // if (is_1st_scope_ssa_tuple_var) {
@@ -451,7 +440,7 @@ void Lnast::sel2local_tuple_chain(const Lnast_nid &psts_nid, Lnast_nid &selc_nid
     // auto is_1st_scope_ssa_tuple_var = update_tuple_var_1st_scope_ssa_table(psts_nid, get_first_child(ta_nid));
     // no need to create Tuple_chain asg if the chain is at top scope, the tuple_chain_asg is used for chaining tuple-chain across
     // different hierarchy scopes
-    if (get_parent(psts_nid).is_root())
+    if (get_parent(psts_nid) == hhds::ROOT)
       return;
 
     // if (is_1st_scope_ssa_tuple_var
@@ -493,7 +482,7 @@ void Lnast::sel2local_tuple_chain(const Lnast_nid &psts_nid, Lnast_nid &selc_nid
       return;
 
     // auto is_1st_scope_ssa_tuple_var = update_tuple_var_1st_scope_ssa_table(psts_nid, c1_sel);
-    if (get_parent(psts_nid).is_root())
+    if (get_parent(psts_nid) == hhds::ROOT)
       return;
 
     return;
@@ -543,7 +532,7 @@ void Lnast::sel2local_tuple_chain(const Lnast_nid &psts_nid, Lnast_nid &selc_nid
   // auto is_1st_scope_ssa_tuple_var = update_tuple_var_1st_scope_ssa_table(psts_nid, c1_tg);
   // no need to create Tuple_chain asg if the chain is at top scope, the tuple_chain_asg is used for chaining tuple-chain across
   // different hierarchy scopes
-  if (get_parent(psts_nid).is_root())
+  if (get_parent(psts_nid) == hhds::ROOT)
     return;
 
   // if (is_1st_scope_ssa_tuple_var && check_tuple_var_1st_scope_ssa_table_parents_chain(psts_nid, c1_tg_name,
@@ -571,7 +560,7 @@ void Lnast::sel2local_tuple_chain(const Lnast_nid &psts_nid, Lnast_nid &selc_nid
 #if 0
 bool Lnast::check_tuple_var_1st_scope_ssa_table_parents_chain(const Lnast_nid &psts_nid, std::string_view ref_name,
                                                               const Lnast_nid &src_if_nid) {
-  if (get_parent(psts_nid).is_root()) {
+  if (get_parent(psts_nid) == hhds::ROOT) {
     auto &tuple_var_1st_scope_ssa_table = tuple_var_1st_scope_ssa_tables[psts_nid];
     auto  it                            = tuple_var_1st_scope_ssa_table.find(ref_name);
     if (it == tuple_var_1st_scope_ssa_table.end()) {
@@ -766,7 +755,7 @@ void Lnast::ssa_rhs_handle_a_statement(const Lnast_nid &psts_nid, const Lnast_ni
   bool the_ta_is_tuple_struct = false;
   if (type.is_tuple_add() || type.is_tuple_set()) {
     auto first_child  = get_first_child(opr_nid);
-    auto second_child = get_sibling_next(first_child);
+    auto second_child = Lnast_nid(get_sibling_next(first_child));
     if (!second_child.is_invalid() && get_type(second_child).is_assign())
       the_ta_is_tuple_struct = true;
   }
@@ -1049,7 +1038,7 @@ Lnast_nid Lnast::check_phi_table_parents_chain(std::string_view target_name, con
   if (parent_table.find(target_name) != parent_table.end())
     return parent_table[target_name];
 
-  if (get_parent(psts_nid).is_root()) {
+  if (get_parent(psts_nid) == hhds::ROOT) {
     return Lnast_nid();
   } else {
     auto tmp_if_nid   = get_parent(psts_nid);
@@ -1166,7 +1155,7 @@ int8_t Lnast::check_rhs_cnt_table_parents_chain(const Lnast_nid &psts_nid, const
 
   if (itr != ssa_rhs_cnt_table.end()) {
     return ssa_rhs_cnt_table[target_name];
-  } else if (get_parent(psts_nid).is_root()) {
+  } else if (get_parent(psts_nid) == hhds::ROOT) {
     return 0;
   } else if (get_type(get_parent(psts_nid)).is_func_def()) {
     return 0;
@@ -1201,21 +1190,23 @@ void Lnast::dump(const Lnast_nid &root_nid) const {
   for (const auto &it : depth_preorder(root_nid)) {
     const auto &node = get_data(it);
     std::string indent;
-    indent = indent.append(it.level * 4 + 4, ' ');
+    indent = indent.append(get_level(it) * 4 + 4, ' ');
     //const auto &tok = get_token(root_nid);
-    const auto &tok = node.token;
-    fmt::print("{:<3}-{:<3} {:<10} ", tok.pos1, tok.pos2, tok.fname);
-
     if (node.type.is_ref() && node.token.get_text().substr(0, 3) != "___") {  // only ref need/have ssa info, exclude tmp variable case
-      fmt::print("({:<1},{:<6}) {} {:<8}: {}___{}\n",
-                 it.level,
-                 it.pos,
+      fmt::print("({:<2},{:<6}) {} {:<8}: {}___{}\n",
+                 get_level(it),
+                 get_pos(it),
                  indent,
                  node.type.to_sv(),
                  node.token.get_text(),
                  node.subs);
     } else {
-      fmt::print("({:<1},{:<6}) {} {:<8}: {}    \n", it.level, it.pos, indent, node.type.to_sv(), node.token.get_text());
+      fmt::print("({:<2},{:<6}) {} {:<8}: {}\n",
+                 get_level(it),
+                 get_pos(it),
+                 indent,
+                 node.type.to_sv(),
+                 node.token.get_text());
     }
   }
 }

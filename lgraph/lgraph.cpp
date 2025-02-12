@@ -413,7 +413,7 @@ Node_pin_iterator Lgraph::out_connected_pins(const Node &node) const {
     auto n = node_internal[idx2].get_num_local_outputs();
     if (n > 0) {
       auto root_idx = idx2;
-      if (!node_internal[idx2].is_root()) {
+      if (node_internal[idx2].get_nid() != hhds::ROOT) {
         root_idx = node_internal[idx2].get_nid();
       }
 
@@ -454,7 +454,7 @@ Node_pin_iterator Lgraph::inp_connected_pins(const Node &node) const {
     auto n = node_internal[idx2].get_num_local_inputs();
     if (n > 0) {
       auto root_idx = idx2;
-      if (!node_internal[idx2].is_root()) {
+      if (node_internal[idx2].get_nid() != hhds::ROOT) {
         root_idx = node_internal[idx2].get_nid();
       }
 
@@ -496,7 +496,7 @@ Node_pin_iterator Lgraph::inp_drivers(const Node &node) const {
 
     if (n) {
       auto root_idx = idx2;
-      if (!node_internal[idx2].is_root()) {
+      if (node_internal[idx2].get_nid() != hhds::ROOT) {
         root_idx = node_internal[idx2].get_nid();
       }
 

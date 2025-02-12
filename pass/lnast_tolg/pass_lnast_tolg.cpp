@@ -42,7 +42,7 @@ void Pass_lnast_tolg::tolg(Eprp_var &var) {
   for (const auto &ln : var.lnasts) {
     // auto       module_name = absl::StrCat("__firrtl_", ln->get_top_module_name());
     auto       module_name = ln->get_top_module_name();
-    const auto top_stmts   = ln->get_first_child(hhds::root());
+    const auto top_stmts   = ln->get_first_child(hhds::ROOT);
 
     Lnast_tolg pp(module_name, path);
     lgs = pp.do_tolg(ln, top_stmts);

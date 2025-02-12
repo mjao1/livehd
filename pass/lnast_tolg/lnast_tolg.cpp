@@ -411,7 +411,7 @@ void Lnast_tolg::process_ast_tuple_struct(Lgraph *lg, const Lnast_nid &lnidx_tup
   auto subs      = lnast->get_subs(c0_tup);
 
   auto c1_tup = lnast->get_sibling_next(c0_tup);
-  if (c1_tup.is_invalid()) {
+  if (Lnast_nid(c1_tup).is_invalid()) {
     // Tuple can be empty
     // 2                             tuple :
     // 3                                   ref : ___d
@@ -434,7 +434,7 @@ void Lnast_tolg::process_ast_tuple_struct(Lgraph *lg, const Lnast_nid &lnidx_tup
   auto     c1_tup_vname = lnast->get_vname(c1_tup);
   uint16_t fp           = 0;
 
-  for (auto tup_child = c1_tup; !tup_child.is_invalid(); tup_child = lnast->get_sibling_next(tup_child)) {
+  for (auto tup_child = c1_tup; !Lnast_nid(tup_child).is_invalid(); tup_child = lnast->get_sibling_next(tup_child)) {
     I(tup_child != lnast->get_first_child(lnidx_tup));
 
     auto type = lnast->get_type(tup_child);
@@ -1308,7 +1308,7 @@ void Lnast_tolg::process_ast_attr_set_op(Lgraph *lg, const Lnast_nid &lnidx_aset
 
     auto it_aset = field_aset;
 
-    while (!it_aset.is_invalid()) {
+    while (!Lnast_nid(it_aset).is_invalid()) {
       I(lnast->get_type(it_aset).is_const());  // How can it be a ref?? foo.a.b.c.__xxx (a/b/c/__xxx must be consts)
       auto vname2 = lnast->get_vname(it_aset);
       if (field.empty()) {
@@ -1318,7 +1318,7 @@ void Lnast_tolg::process_ast_attr_set_op(Lgraph *lg, const Lnast_nid &lnidx_aset
       }
       it_aset  = lnast->get_sibling_next(it_aset);
       val_aset = it_aset;
-      if (lnast->get_sibling_next(val_aset).is_invalid()) {
+      if (Lnast_nid(lnast->get_sibling_next(val_aset)).is_invalid()) {
         break;
       }
     }
@@ -1392,7 +1392,7 @@ void Lnast_tolg::process_ast_attr_get_op(Lgraph *lg, const Lnast_nid &lnidx_aget
   auto        attr_vname = lnast->get_vname(cn_aget);
   auto        it_aset    = c1_aget;
 
-  while (it_aset != cn_aget) {
+  while (!Lnast_nid(it_aset).is_invalid()) {
     if (hier_fields_cat_name.empty()) {
       hier_fields_cat_name = lnast->get_vname(it_aset);
     } else {
@@ -1428,7 +1428,7 @@ void Lnast_tolg::process_ast_attr_get_op(Lgraph *lg, const Lnast_nid &lnidx_aget
     }
 
     it_aset = lnast->get_sibling_next(it_aset);
-    if (!it_aset.is_invalid()) {
+    if (!Lnast_nid(it_aset).is_invalid()) {
       Pass::error("attribute {} must be the last in the entry {}\n", attr_vname, hier_fields_cat_name);
     }
     return;
@@ -1455,7 +1455,7 @@ void Lnast_tolg::process_ast_attr_get_op(Lgraph *lg, const Lnast_nid &lnidx_aget
     driver_vname2wire_nodes[driver_vname].emplace_back(wire_node);
 
     it_aset = lnast->get_sibling_next(it_aset);
-    if (!it_aset.is_invalid()) {
+    if (!Lnast_nid(it_aset).is_invalid()) {
       Pass::error("attribute {} must be the last in the entry {}\n", attr_vname, hier_fields_cat_name);
     }
     return;

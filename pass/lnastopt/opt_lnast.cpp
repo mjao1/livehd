@@ -903,7 +903,7 @@ void Opt_lnast::process_tuple_add(const std::shared_ptr<Lnast> &ln, const Lnast_
   //-------------------------------
   idx = ln->get_sibling_next(idx);
 
-  if (idx.is_invalid()) {
+  if (Lnast_nid(idx).is_invalid()) {
     st.set(var_root, Lconst::invalid());  // just declare the variable as an empty tuple
     return;
   }
@@ -911,7 +911,7 @@ void Opt_lnast::process_tuple_add(const std::shared_ptr<Lnast> &ln, const Lnast_
   auto bundle = std::make_shared<Bundle>(var_root);
 
   int pos = 0;
-  while (!idx.is_invalid()) {
+  while (!Lnast_nid(idx).is_invalid()) {
     auto pos_txt = std::to_string(pos);
 
     const auto &data = ln->get_data(idx);
@@ -1047,7 +1047,7 @@ void Opt_lnast::process_stmts(const std::shared_ptr<Lnast> &ln, const Lnast_nid 
 
   auto idx = ln->get_first_child(lnid);
 
-  while (!idx.is_invalid()) {
+  while (!Lnast_nid(idx).is_invalid()) {
     const auto &data = ln->get_data(idx);
 
     switch (data.type.get_raw_ntype()) {
@@ -1087,7 +1087,7 @@ void Opt_lnast::reconstruct_stmts(const std::shared_ptr<Lnast> &ln, const Lnast_
 
   bool nested_flag = false;  // flag to indicate whether the loop is currently checking grandchildren
   auto return_node = idx;    //  node to return to after a node's grandchildren are done being checked
-  while (!idx.is_invalid()) {
+  while (!Lnast_nid(idx).is_invalid()) {
     const auto &data = ln->get_data(idx);
 
     auto  lhs_id    = ln->get_first_child(idx);

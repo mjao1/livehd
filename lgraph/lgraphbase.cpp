@@ -110,7 +110,7 @@ Index_id Lgraph_Base::create_node_space(const Index_id last_idx, const Port_ID d
   }
 
   if (root_idx) {
-    I(node_internal[root_idx].is_root());
+    I(node_internal[root_idx].get_nid() == hhds::ROOT);
     nidx2->clear_root();
     nidx2->set_nid(root_idx);
   } else {
@@ -160,7 +160,7 @@ Index_id Lgraph_Base::create_node_space(const Index_id last_idx, const Port_ID d
   // make space in idx so that we can push_next_state
   node_internal[idx3].set_dst_pid(node_internal[last_idx].get_dst_pid());
   node_internal[idx3].clear_root();
-  if (node_internal[last_idx].is_root()) {
+  if (node_internal[last_idx].get_nid() == hhds::ROOT) {
     node_internal[idx3].set_nid(last_idx);
   } else {
     node_internal[idx3].set_nid(node_internal[last_idx].get_nid());
@@ -175,7 +175,7 @@ Index_id Lgraph_Base::create_node_space(const Index_id last_idx, const Port_ID d
   node_internal[last_idx].push_next_state(idx2);
   node_internal[idx2].push_next_state(idx3);
 
-  I(!node_internal[idx3].is_root());
+  I(node_internal[idx3].get_nid() != hhds::ROOT);
 
   I(!node_internal[last_idx].is_last_state());
   I(!node_internal[idx2].is_last_state());
@@ -209,7 +209,7 @@ void Lgraph_Base::print_stats() const {
       n_long_edges += node_internal[i].get_num_local_long();
       n_short_edges += node_internal[i].get_num_local_short();
       n_nodes++;
-      if (node_internal[i].is_root()) {
+      if (node_internal[i].get_nid() == hhds::ROOT) {
         n_roots++;
         if (node_internal[i].is_master_root()) {
           n_master++;
@@ -284,7 +284,7 @@ Index_id Lgraph_Base::get_space_output_pin(const Index_id master_nid, const Inde
 #endif
 
 #ifdef DEBUG_SLOW
-  I(node_internal[master_nid].is_root());
+  I(node_internal[master_nid].get_nid() == hhds::ROOT);
   I(node_internal[start_nid].is_node_state());
 #endif
 
@@ -381,7 +381,7 @@ Index_id Lgraph_Base::find_idx_from_pid_int(const Index_id nid, const Port_ID pi
 
   Index_id idx2 = nid;
   while (true) {
-    if (node_internal[idx2].get_dst_pid() == pid && node_internal[idx2].is_root()) {
+    if (node_internal[idx2].get_dst_pid() == pid && node_internal[idx2].get_nid() == hhds::ROOT) {
       // node_internal.ref_unlock();
       return idx2;
     }
@@ -418,7 +418,7 @@ Index_id Lgraph_Base::setup_idx_from_pid(const Index_id nid, const Port_ID pid) 
 Index_id Lgraph_Base::get_space_output_pin(const Index_id start_nid, const Port_ID dst_pid, Index_id &root_idx) {
   // node_internal.ref_lock();
 
-  I(node_internal[start_nid].is_root());
+  I(node_internal[start_nid].get_nid() == hhds::ROOT);
   I(node_internal[start_nid].is_node_state());
   if (node_internal[start_nid].has_space_short() && node_internal[start_nid].get_dst_pid() == dst_pid) {
     root_idx = start_nid;
@@ -430,13 +430,13 @@ Index_id Lgraph_Base::get_space_output_pin(const Index_id start_nid, const Port_
 
   while (true) {
     if (node_internal[idx].get_dst_pid() == dst_pid) {
-      if (node_internal[idx].is_root()) {
+      if (node_internal[idx].get_nid() == hhds::ROOT) {
         root_idx = idx;
       }
 
       if (node_internal[idx].has_space_short()) {
         GI(root_idx != start_nid, node_internal[start_nid].get_dst_pid() != node_internal[root_idx].get_dst_pid());
-        I(node_internal[root_idx].is_root());
+        I(node_internal[root_idx].get_nid() == hhds::ROOT);
 
         // node_internal.ref_unlock();
         return idx;
@@ -451,7 +451,7 @@ Index_id Lgraph_Base::get_space_output_pin(const Index_id start_nid, const Port_
       if (root_idx == 0) {
         root_idx = idx_new;
       }
-      I(node_internal[root_idx].is_root());
+      I(node_internal[root_idx].get_nid() == hhds::ROOT);
       // node_internal.ref_unlock();
       return idx_new;
     }
@@ -471,8 +471,8 @@ void Lgraph_Base::add_edge_int(const Index_id dst_idx, const Port_ID inp_pid, In
 
   // node_internal.ref_lock();
 
-  I(node_internal[dst_idx].is_root());
-  I(node_internal[src_idx].is_root());
+  I(node_internal[dst_idx].get_nid() == hhds::ROOT);
+  I(node_internal[src_idx].get_nid() == hhds::ROOT);
 
   Index_id root_idx = src_idx;
 
@@ -519,7 +519,7 @@ void Lgraph_Base::add_edge_int(const Index_id dst_idx, const Port_ID inp_pid, In
     auto idx = get_space_output_pin(src_nid, src_idx, dst_pid, root_idx);
     // node_internal.ref_lock();
     I(root_idx != 0);
-    I(node_internal[root_idx].is_root());
+    I(node_internal[root_idx].get_nid() == hhds::ROOT);
 
     int o = node_internal[idx].next_free_output_pos();
 
@@ -605,7 +605,7 @@ void Lgraph_Base::add_edge_int(const Index_id dst_idx, const Port_ID inp_pid, In
     }
   }
 
-  I(node_internal[root_idx].is_root());
+  I(node_internal[root_idx].get_nid() == hhds::ROOT);
 
   // node_internal.ref_unlock();
 }

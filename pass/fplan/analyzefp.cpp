@@ -124,7 +124,7 @@ Pass_fplan_analyzefp::Pass_fplan_analyzefp(const Eprp_var& var) : Pass("pass.fpl
 
     for (const auto& index : nt.pre_order()) {  // preorder because higher level nodes are probably going to be analyzed more
                                                      // often than leaf nodes
-      if (index.is_root()) {
+      if (index == nt.get_root()) {
         continue;  // skip root for now
       }
 
@@ -147,7 +147,7 @@ Pass_fplan_analyzefp::Pass_fplan_analyzefp(const Eprp_var& var) : Pass("pass.fpl
           hint_map.insert_or_assign(n.get_compact(), hint_enum);
           const hhds::Tree_pos parent_idx = nt.get_parent(index);
           const Node&          parent     = nt.get_data(parent_idx);
-          if (!parent_idx.is_root() && !hint_map.contains(parent.get_compact())) {
+          if (parent_idx != nt.get_root() && !hint_map.contains(parent.get_compact())) {
             hint_map.insert_or_assign(parent.get_compact(), UnknownHint);
             fmt::print("setting UnknownHint for parent {} due to child having hint\n", safe_name(parent));
           }

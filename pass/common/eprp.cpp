@@ -253,7 +253,7 @@ void Eprp::elaborate() {
 
 void Eprp::process_ast_handler(const hhds::Tree_pos &self, const Ast_parser_node &node) {
   auto txt = scan_text(node.token_entry);
-  fmt::print("level:{} pos:{} te:{} rid:{} txt:{}\n", self.level, self.pos, (int)node.token_entry, (int)node.rule_id, txt);
+  fmt::print("level:{} pos:{} te:{} rid:{} txt:{}\n", ast->get_level(self), ast->get_pos(self), (int)node.token_entry, (int)node.rule_id, txt);
 
   if (node.rule_id == Eprp_rule_cmd_or_reg) {
     std::string children_txt;
@@ -275,11 +275,9 @@ void Eprp::process_ast_handler(const hhds::Tree_pos &self, const Ast_parser_node
 }
 
 void Eprp::process_ast() {
-  for (const auto &ti : ast->pre_order()) {
-    fmt::print("ti.level:{} ti.pos:{}\n", ti.level, ti.pos);
+  for (const auto &ti : ast->depth_postorder()) {
+    process_ast_handler(ti, ast->get_data(ti));
   }
-
-  ast->each_bottom_up_fast(std::bind(&Eprp::process_ast_handler, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void Eprp::run_cmd(std::string_view cmd, const Eprp_var &cmd_var_fields) {

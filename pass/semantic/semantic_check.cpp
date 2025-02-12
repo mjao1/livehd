@@ -146,9 +146,9 @@ void Semantic_check::error_print_lnast_by_name(Lnast *lnast, std::string_view er
   for (const auto &it : lnast->pre_order()) {
     auto node = lnast->get_data(it);
 
-    std::string indent(2 * (it.level + 1), ' ');
+    std::string indent(2 * (lnast->get_level(it) + 1), ' ');
 
-    fmt::print("{} {} {:>20} : {}", it.level, indent, node.type.to_sv(), node.token.get_text());
+    fmt::print("{} {} {:>20} : {}", lnast->get_level(it), indent, node.type.to_sv(), node.token.get_text());
 
     if (node.token.get_text() == error_name && !printed) {
       fmt::print(fmt::fg(fmt::color::red), "    <==========\n");
@@ -169,9 +169,9 @@ void Semantic_check::error_print_lnast_by_type(Lnast *lnast, std::string_view er
   for (const auto &it : lnast->pre_order()) {
     const auto &node = lnast->get_data(it);
 
-    std::string indent(2 * (it.level + 1), ' ');
+    std::string indent(2 * (lnast->get_level(it) + 1), ' ');
 
-    fmt::print("{} {} {:>20} : {}", it.level, indent, node.type.to_sv(), node.token.get_text());
+    fmt::print("{} {} {:>20} : {}", lnast->get_level(it), indent, node.type.to_sv(), node.token.get_text());
 
     if (node.type.to_sv() == error_name && !printed) {
       fmt::print(fmt::fg(fmt::color::red), "    <==========\n");
@@ -193,9 +193,9 @@ void Semantic_check::error_print_lnast_var_warn(Lnast *lnast, std::vector<std::s
   for (const auto &it : lnast->pre_order()) {
     auto node = lnast->get_data(it);
 
-    std::string indent(2 * (it.level + 1), ' ');
+    std::string indent(2 * (lnast->get_level(it) + 1), ' ');
 
-    fmt::print("{} {} {:>20} : {}", it.level, indent, node.type.to_sv(), node.token.get_text());
+    fmt::print("{} {} {:>20} : {}", lnast->get_level(it), indent, node.type.to_sv(), node.token.get_text());
 
     if (error_names.size() != 0) {
       for (auto node_name = error_names.begin(); node_name != error_names.end(); *node_name++) {
@@ -409,7 +409,7 @@ void Semantic_check::resolve_out_of_scope() {
 
 void Semantic_check::check_primitive_ops(Lnast *lnast, const Lnast_nid &lnidx_opr, const Lnast_ntype node_type,
                                          std::string_view stmt_name) {
-  if (!lnast->has_single_child(lnidx_opr)) {
+  if (lnast->get_first_child(lnidx_opr) != hhds::ROOT) {
     // Vector for add_to_rhs_list()
     std::vector<Lnast_nid> rhs_args;
 
@@ -797,7 +797,7 @@ void Semantic_check::check_func_call(Lnast *lnast, const Lnast_nid &lnidx_opr, s
 // NOTE: Test does only consider tuple and tuple concat operations
 void Semantic_check::do_check(Lnast *lnast) {
   // Get Lnast Root
-  const auto stmts = lnast->get_first_child(hhds::root());
+  const auto stmts = lnast->get_first_child(hhds::ROOT);
   // Iterate through Lnast top statements
   for (const auto &stmt : lnast->children(stmts)) {
     const auto ntype     = lnast->get_data(stmt).type;

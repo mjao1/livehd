@@ -356,6 +356,33 @@ public:
   [[nodiscard]] bool     is_leaf(const Tree_pos& leaf_index) const;
   [[nodiscard]] Tree_pos get_root() const {return ROOT;}
 
+  void clear() {
+    data_stack.clear();
+    pointers_stack.clear();
+  }
+
+  [[nodiscard]] int get_level(Tree_pos pos) const {
+    int level = 0;
+    while (pos != ROOT && pos != INVALID) {
+      pos = get_parent(pos);
+      level++;
+    }
+    return level;
+  }
+
+  [[nodiscard]] int get_pos(Tree_pos pos) const {
+    return pos & CHUNK_MASK;
+  }
+
+  [[nodiscard]] bool is_child_of(Tree_pos child, Tree_pos potential_parent) const {
+    while (child != ROOT && child != INVALID) {
+      child = get_parent(child);
+      if (child == potential_parent)
+        return true;
+    }
+    return false;
+  }
+
   /**
    *  Update based API (Adds and Deletes from the tree)
    */
@@ -378,6 +405,12 @@ public:
     GI(_check_idx_exists(idx), data_stack[idx].has_value(), "Index out of range or no data at the index");
 
     return data_stack[idx].value();
+  }
+
+  X* ref_data(const Tree_pos& idx) {
+    GI(_check_idx_exists(idx), data_stack[idx].has_value(), "Index out of range or no data at the index");
+
+    return &data_stack[idx].value();
   }
 
   const X& get_data(const Tree_pos& idx) const {

@@ -26,7 +26,7 @@ int main(void) {
     auto node_target = Lnast_node::create_ref("val", line_num, pos1, pos2);
     auto node_const  = Lnast_node::create_const("0d1023", line_num, pos1, pos2);
 
-    lnast->set_root(idx_root);
+    lnast->add_root(idx_root);
 
     auto idx_stmts  = lnast->add_child(lnast->get_root(), node_stmts);
     auto idx_assign = lnast->add_child(idx_stmts, node_assign);
@@ -62,7 +62,7 @@ int main(void) {
     auto node_lhs3 = Lnast_node::create_ref("total", line_num, pos1, pos2);
     auto node_op6  = Lnast_node::create_ref("___b", line_num, pos1, pos2);
 
-    lnast->set_root(idx_root);
+    lnast->add_root(idx_root);
 
     auto idx_stmts = lnast->add_child(lnast->get_root(), node_stmts);
     auto idx_minus = lnast->add_child(idx_stmts, node_minus);
@@ -93,7 +93,7 @@ int main(void) {
     fmt::print("If Operation Test\n\n");
 
     auto idx_root = Lnast_node::create_top("top", line_num, pos1, pos2);
-    lnast->set_root(idx_root);
+    lnast->add_root(idx_root);
 
     auto idx_stmts0 = lnast->add_child(lnast->get_root(), Lnast_node::create_stmts("stmts0", line_num, pos1, pos2));
     auto idx_if     = lnast->add_child(idx_stmts0, Lnast_node::create_if("if", line_num, pos1, pos2));
@@ -128,7 +128,7 @@ int main(void) {
     fmt::print("If Operation (inefficient)\n\n");
 
     auto idx_root = Lnast_node::create_top("top", line_num, pos1, pos2);
-    lnast->set_root(idx_root);
+    lnast->add_root(idx_root);
 
     auto idx_stmts0 = lnast->add_child(lnast->get_root(), Lnast_node::create_stmts("stmts0", line_num, pos1, pos2));
     auto idx_if     = lnast->add_child(idx_stmts0, Lnast_node::create_if("if", line_num, pos1, pos2));
@@ -167,7 +167,7 @@ int main(void) {
     fmt::print("If Operation (complex)\n\n");
 
     auto idx_root = Lnast_node::create_top("top", line_num, pos1, pos2);
-    lnast->set_root(idx_root);
+    lnast->add_root(idx_root);
 
     auto idx_stmts0 = lnast->add_child(lnast->get_root(), Lnast_node::create_stmts("stmts0", line_num, pos1, pos2));
     auto idx_if     = lnast->add_child(idx_stmts0, Lnast_node::create_if("if", line_num, pos1, pos2));
@@ -214,7 +214,7 @@ int main(void) {
     fmt::print("For Loop Operation Test\n\n");
 
     auto idx_root = Lnast_node::create_top("top", line_num, pos1, pos2);
-    lnast->set_root(idx_root);
+    lnast->add_root(idx_root);
 
     auto idx_stmts0 = lnast->add_child(lnast->get_root(), Lnast_node::create_stmts("stmts0", line_num, pos1, pos2));
     auto idx_tup    = lnast->add_child(idx_stmts0, Lnast_node::create_tuple("tuple", line_num, pos1, pos2));
@@ -262,7 +262,7 @@ int main(void) {
     fmt::print("While Loop Operation Test\n\n");
 
     auto idx_root = Lnast_node::create_top("top", line_num, pos1, pos2);
-    lnast->set_root(idx_root);
+    lnast->add_root(idx_root);
 
     auto idx_stmts0 = lnast->add_child(lnast->get_root(), Lnast_node::create_stmts("stmts0", line_num, pos1, pos2));
 
@@ -291,7 +291,7 @@ int main(void) {
     fmt::print("Func Def Operation Test\n\n");
 
     auto idx_root = Lnast_node::create_top("top", line_num, pos1, pos2);
-    lnast->set_root(idx_root);
+    lnast->add_root(idx_root);
 
     auto idx_stmts0 = lnast->add_child(lnast->get_root(), Lnast_node::create_stmts("stmts0", line_num, pos1, pos2));
     auto idx_func   = lnast->add_child(idx_stmts0, Lnast_node::create_func_def("func_def", line_num, pos1, pos2));
@@ -325,7 +325,7 @@ int main(void) {
     fmt::print("Conditional Func Def Operation Test\n\n");
 
     auto idx_root = Lnast_node::create_top("top", line_num, pos1, pos2);
-    lnast->set_root(idx_root);
+    lnast->add_root(idx_root);
 
     auto idx_stmts0 = lnast->add_child(lnast->get_root(), Lnast_node::create_stmts("stmts0", line_num, pos1, pos2));
     auto idx_func   = lnast->add_child(idx_stmts0, Lnast_node::create_func_def("stmts0", line_num, pos1, pos2));
@@ -365,7 +365,7 @@ int main(void) {
     fmt::print("Implicit Func Call Operation Test\n\n");
 
     auto idx_root = Lnast_node::create_top("top", line_num, pos1, pos2);
-    lnast->set_root(idx_root);
+    lnast->add_root(idx_root);
 
     auto idx_stmts0 = lnast->add_child(lnast->get_root(), Lnast_node::create_stmts("stmts0", line_num, pos1, pos2));
     auto idx_func   = lnast->add_child(idx_stmts0, Lnast_node::create_func_def("func_def", line_num, pos1, pos2));
@@ -424,7 +424,7 @@ int main(void) {
     fmt::print("Explicit Func Call Operation Test\n\n");
 
     auto idx_root = Lnast_node::create_top("top", line_num, pos1, pos2);
-    lnast->set_root(idx_root);
+    lnast->add_root(idx_root);
 
     auto idx_stmts0 = lnast->add_child(lnast->get_root(), Lnast_node::create_stmts("stmts0", line_num, pos1, pos2));
     auto idx_func   = lnast->add_child(idx_stmts0, Lnast_node::create_func_def("func_def", line_num, pos1, pos2));
@@ -482,7 +482,7 @@ int main(void) {
     fmt::print("Tuple Operation Test\n\n");
 
     auto idx_root = Lnast_node::create_top("top", line_num, pos1, pos2);
-    lnast->set_root(idx_root);
+    lnast->add_root(idx_root);
 
     auto idx_stmts0 = lnast->add_child(lnast->get_root(), Lnast_node::create_stmts("stmts0", line_num, pos1, pos2));
     auto idx_plus   = lnast->add_child(idx_stmts0, Lnast_node::create_plus("plus", line_num, pos1, pos2));
@@ -513,7 +513,7 @@ int main(void) {
     fmt::print("Tuple Concat Operation\n\n");
 
     auto idx_root = Lnast_node::create_top("top", line_num, pos1, pos2);
-    lnast->set_root(idx_root);
+    lnast->add_root(idx_root);
 
     auto idx_stmts0 = lnast->add_child(lnast->get_root(), Lnast_node::create_stmts("stmts0", line_num, pos1, pos2));
 
@@ -566,7 +566,7 @@ int main(void) {
     fmt::print("Attribute Operation Test\n\n");
 
     auto idx_root = Lnast_node::create_top("top", line_num, pos1, pos2);
-    lnast->set_root(idx_root);
+    lnast->add_root(idx_root);
 
     auto idx_stmts = lnast->add_child(lnast->get_root(), Lnast_node::create_stmts("stmts0", line_num, pos1, pos2));
 

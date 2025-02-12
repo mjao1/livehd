@@ -10,6 +10,8 @@
 #include "tree.hpp"
 #include "lrand.hpp"
 
+using hhds::Tree_pos;
+
 class Tree_lgdb_setup : public ::testing::Test {
 protected:
   struct Node_data {
@@ -22,8 +24,8 @@ protected:
   };
 
   hhds::tree<Node_data> tree;
-  std::vector<Node>   node_order;
-  Lgraph             *lg_root;
+  std::vector<Node>     node_order;
+  Lgraph               *lg_root;
 
   absl::flat_hash_map<Node::Compact, uint64_t> absl_fwd_pos;
   absl::flat_hash_map<Node::Compact, uint64_t> absl_bwd_pos;
@@ -34,14 +36,14 @@ protected:
   void map_tree_to_lgraph() {
     std::vector<hhds::Tree_pos> index_order;
 
-    tree.pre_order([&index_order](const hhds::Tree_pos &index, const Node_data &node) {
-      (void)node;
+    for (auto index : tree.pre_order()) {
       // fmt::print(" level:{} pos:{} create_pos:{} fwd:{} bwd:{} leaf:{}\n", index.level, index.pos, node.create_pos, node.fwd_pos,
       // node.bwd_pos, node.leaf);
 
-      if (index.level || index.pos)
+      if (index != tree.get_root()) {
         index_order.emplace_back(index);
-    });
+      }
+    }
 
     auto *lib = Graph_library::instance("lgdb_hier_test");
 
@@ -60,7 +62,7 @@ protected:
     for (const auto &index : index_order) {
       const auto &data = tree.get_data(index);
 
-      I(index.level || index.pos);  // skip root
+      I(tree.get_level(index) || tree.get_pos(index));  // skip root
 
       auto        parent_index = tree.get_parent(index);
       const auto &parent_data  = tree.get_data(parent_index);
@@ -231,7 +233,7 @@ protected:
     Node_data root_data;
     root_data.create_pos = 0;
 
-    tree.set_root(root_data);
+    tree.add_root(root_data);
 
     I(max_depth > 1);
 
@@ -245,27 +247,25 @@ protected:
       level     = rint.max(max_level);
       I(level < max_depth);
 
-      hhds::Tree_pos index(level, rint.max(tree.get_num_children(level)));
-
       Node_data data;
       data.create_pos = i + 1;
       data.fwd_pos    = -1;
       data.bwd_pos    = -1;
 
+      auto parent = tree.get_root();
+      auto index = tree.add_child(parent, data);
+
       double leaf_ratio = (double)n_leafs / (1.0 + i);
 
-      // fmt::print("leaf_ratio:{} {} {}\n", leaf_ratio,n_leafs, i);
-
-      if (leaf_ratio < leaf_ratio_goal && index.level) {  // Not to root
-        tree.append_sibling(index, data);
+      if (leaf_ratio < leaf_ratio_goal) {  // Not to root
+        index = tree.append_sibling(index, data);
         n_leafs++;
       } else {
-        // index.pos = tree.get_num_children(index.level)-1; // Add child at the end
         if (!tree.is_leaf(index))
           n_leafs++;
 
-        tree.add_child(index, data);
-        if ((index.level + 1) == max_level && max_level < max_depth)
+        index = tree.add_child(index, data);
+        if ((tree.get_level(index) + 1) == max_level && max_level < max_depth)
           max_level++;
         I(max_level <= max_depth);
       }
@@ -274,39 +274,37 @@ protected:
     int pos = 0;
     n_leafs = 0;
     for (auto index : tree.pre_order()) {
-      auto *data    = tree.ref_data(index);
-      data->fwd_pos = pos;
-      data->bwd_pos = size - pos;
-      data->leaf    = tree.is_leaf(index);
-      if (data->leaf) {
-        std::string name("leaf_l" + std::to_string(index.level) + "p" + std::to_string(index.pos));
-        data->name = name;
+      auto &data = tree.get_data(index);
+      data.fwd_pos = pos;
+      data.bwd_pos = size - pos;
+      data.leaf = tree.is_leaf(index);
+      if (data.leaf) {
+        std::string name("leaf_l" + std::to_string(tree.get_level(index)) + "p" + std::to_string(tree.get_pos(index)));
+        data.name = name;
         n_leafs++;
       } else {
-        std::string name("node_l" + std::to_string(index.level) + "p" + std::to_string(index.pos));
-        data->name = name;
+        std::string name("node_l" + std::to_string(tree.get_level(index)) + "p" + std::to_string(tree.get_pos(index)));
+        data.name = name;
       }
       ++pos;
     }
 
+    fmt::print("Tree with {} nodes {} leafs and {} depth\n", size, n_leafs, max_level);
+
     if (!unique) {
+      Node_data copy_data;
+      copy_data.create_pos = size + 1;
+      copy_data.fwd_pos = -1;
+      copy_data.bwd_pos = -1;
+
       for (int i = 0; i < size / 32; i++) {
-        hhds::Tree_pos insert_point(rint.max(max_level), rint.max(tree.get_num_children(max_level)));
-        hhds::Tree_pos copy_point(rint.max(max_level), rint.max(tree.get_num_children(max_level)));
+        auto insert_point = tree.add_child(tree.get_root(), copy_data);
+        auto copy_point = tree.add_child(tree.get_root(), copy_data);
 
         if (tree.is_child_of(copy_point, insert_point))  // No recursion insert
           continue;
-
-#if 0
-        HERE! Create a "copy" and "move" in the tree.hpp
-        for (auto index : tree.breadth_first()) {
-          HERE!
-        }
-#endif
       }
     }
-
-    fmt::print("Tree with {} nodes {} leafs and {} depth\n", size, n_leafs, max_level);
 
     EXPECT_TRUE(pos == (size + 1));  // Missing nodes??? (tree.hpp bug)
   }

@@ -126,7 +126,7 @@ void Fwd_edge_iterator::Fwd_iter::topo_add_chain_fwd(const Node_pin &dst_pin) {
       topo_add_chain_down(dst_pin);
       return;
     } else if (dst_node.is_graph_input()) {  // fwd: UP??
-      if (!dst_node.is_root()) {             // fwd: UP??
+      if (dst_node.get_nid() != hhds::ROOT) {             // fwd: UP??
         auto up_pin = dst_pin.get_up_pin();
         if (up_pin.is_invalid()) {
           return;  // Pin is not connected

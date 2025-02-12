@@ -37,20 +37,20 @@ void Pass_lnastfmt::parse_ln(const std::shared_ptr<Lnast>& ln, Eprp_var& var, st
   observe_lnast(ln.get());  // 1st traversal through the original LN to record assign subtrees.
 
   // now we will make the formatted LNAST:
-  lnastfmted->set_root(
+  lnastfmted->add_root(
       Lnast_node(Lnast_ntype::create_top(), State_token(0, 0, 0, 0, ln->get_top_module_name())));  // root node of lnfmted
-  const auto& stmt_index = ln->get_child(hhds::root());                                  // stmt node of ln
+  const auto& stmt_index = ln->get_first_child(hhds::ROOT);                                  // stmt node of ln
   const auto& stmt_index_fmt
-      = lnastfmted->add_child(hhds::root(),
+      = lnastfmted->add_child(hhds::ROOT,
                               duplicate_node(lnastfmted, ln, stmt_index));  // stmt node of lnfmted (copied from ln)
 
-  auto curr_index = ln->get_child(stmt_index);  // 1st child of ln after stmt
+  auto curr_index = ln->get_first_child(stmt_index);  // 1st child of ln after stmt
 
   while (curr_index != ln->invalid_index()) {
     // iterate through all children of stmt of ln
     bool curr_incremented = false;
     // check if curr_index's child is leaf child?
-    // const auto& leaf_child_check = ln->get_child(curr_index);
+    // const auto& leaf_child_check = ln->get_first_child(curr_index);
     bool all_are_leaves = true;
     for (const hhds::Tree_pos& it : ln->children(curr_index)) {
       // fmt::print("PARSING TO CHECK LEAVES:   {}:{}\n",ln->get_name(it), it.level );
@@ -99,15 +99,11 @@ void Pass_lnastfmt::parse_ln(const std::shared_ptr<Lnast>& ln, Eprp_var& var, st
     } else {  // This else is for nested subtrees (like an "if" subtree)
 
       auto curr_index_fmt = lnastfmted->add_child(stmt_index_fmt, duplicate_node(lnastfmted, ln, curr_index));
-      auto curr_lev       = curr_index.level;
-      auto curr_pos       = curr_index.pos;
+      auto curr_lev       = ln->get_level(curr_index);
+      auto curr_pos       = ln->get_pos(curr_index);
       for (const hhds::Tree_pos& it : ln->depth_preorder(curr_index)) {
-        //        if (((it.level == curr_index.level) && (it.pos > curr_index.pos)) || (it.level < curr_index.level)) {
-        //         break;
-        //       }//This if is needed because depth preorder traverses the next subtree as well. It does not stop after traversing
-        //       the particular subtree (of root curr_index)
-        auto new_lev = it.level;
-        auto new_pos = it.pos;
+        auto new_lev = ln->get_level(it);
+        auto new_pos = ln->get_pos(it);
         auto is      = ref_hash_map.find(ln->get_name(it));
 
         if (new_lev == curr_lev + 1) {
@@ -192,7 +188,7 @@ void Pass_lnastfmt::process_node(Lnast* ln, const hhds::Tree_pos& it) {
     auto sec_child_indx = ln->get_sibling_next(frst_child_indx);
     fmt::print("sec child type and data: {}, {}\n", ln->get_type(sec_child_indx).debug_name(), ln->get_name(sec_child_indx));
 
-    I(ln->get_sibling_next(sec_child_indx).is_invalid(), "This assign node has more than 2 children??");
+    I(ln->get_sibling_next(sec_child_indx) == ln->invalid_index(), "This assign node has more than 2 children??");
 
     ref_hash_map.try_emplace(ln->get_name(sec_child_indx), ln->get_name(frst_child_indx));  // insert key, value pair.
   }

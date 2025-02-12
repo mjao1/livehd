@@ -45,7 +45,7 @@ protected:
 
   bool move_to_child()   {
     nid_stack.push(current_nid);
-    current_nid = lnast->get_child(current_nid);
+    current_nid = lnast->get_first_child(current_nid);
     return !current_nid.is_invalid();
   }
 

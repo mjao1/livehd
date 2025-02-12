@@ -28,6 +28,9 @@ public:
   
   bool operator==(const Lnast_nid& other) const { return pos == other.pos; }
   bool operator!=(const Lnast_nid& other) const { return pos != other.pos; }
+  
+  bool operator==(const hhds::Tree_pos& other) const { return pos == other; }
+  bool operator!=(const hhds::Tree_pos& other) const { return pos != other; }
 };
 
 using Phi_rtable                    = absl::flat_hash_map<std::string, Lnast_nid>;  // rtable = resolve_table
@@ -92,6 +95,22 @@ struct Lnast_node {
   }
 };
 
+// Add hash function for Lnast_nid
+namespace std {
+template <>
+struct hash<Lnast_nid> {
+  size_t operator()(const Lnast_nid& nid) const {
+    return std::hash<hhds::Tree_pos>{}(nid);
+  }
+};
+}
+
+// Add hash function for Abseil
+template <typename H>
+H AbslHashValue(H h, const Lnast_nid& nid) {
+  return H::combine(std::move(h), static_cast<hhds::Tree_pos>(nid));
+}
+
 class Lnast : public hhds::tree<Lnast_node> {
 private:
   std::string top_module_name;
@@ -139,13 +158,13 @@ private:
   void        merge_tconcat_paired_assign(const Lnast_nid &psts_nid, const Lnast_nid &concat_nid);
   void        rename_to_real_tuple_name(const Lnast_nid &psts_nid, const Lnast_nid &tup_nid);
   bool        is_scalar_attribute_related(const Lnast_nid &opr_nid);
-  void        selc2attr_set_get(const Lnast_nid &psts_nid, Lnast_nid &opr_nid);
+  void        selc2attr_set_get(const Lnast_nid &psts_nid, const Lnast_nid &opr_nid);
   void        update_tuple_var_table(const Lnast_nid &psts_nid, const Lnast_nid &opr_nid);
   bool        update_tuple_var_1st_scope_ssa_table(const Lnast_nid &psts_nid, const Lnast_nid &target_nid);
   bool        check_tuple_var_1st_scope_ssa_table_parents_chain(const Lnast_nid &psts_nid, std::string_view ref_name,
                                                                 const Lnast_nid &src_if_nid);
-  void        merge_hierarchical_attr_set(Lnast_nid &opr_nid);
-  void        collect_hier_tuple_nids(Lnast_nid &opr_nid, std::stack<Lnast_nid> &stk_tuple_fields);
+  void        merge_hierarchical_attr_set(const Lnast_nid &opr_nid);
+  void        collect_hier_tuple_nids(const Lnast_nid &opr_nid, std::stack<Lnast_nid> &stk_tuple_fields);
   std::string create_tmp_var();
 
   // hierarchical statements node -> symbol table
@@ -209,6 +228,14 @@ public:
 
   void dump(const Lnast_nid &root) const;
   void dump() const { dump(Lnast_nid::root()); }
+
+  size_t max_size() const { 
+    size_t count = 0;
+    for (auto it = pre_order().begin(); it != pre_order().end(); ++it) {
+      count++;
+    }
+    return count;
+  }
 
   template <typename... Args>
   static void info(fmt::format_string<Args...> format, Args &&...args) {

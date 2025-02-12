@@ -71,8 +71,7 @@ protected:
                         State_token(0, pos1, pos2, 0, cur_stmt.instance, fname));
     hhds::Tree_pos i;
     if (is_top) {
-      lnast->set_root(n);
-      i      = hhds::root();
+      i = lnast->add_root(n);
       is_top = false;
     } else {
       i = lnast->add_child(tree_pos.top(), n);

@@ -10,7 +10,7 @@
  * Firrtl Module. */
 void Inou_firrtl::FindCircuitComps(Lnast &ln, firrtl::FirrtlPB_Module_UserModule *umod) {
   fmt::print("FindCircuitComps\n");
-  const auto stmts = ln.get_first_child(hhds::root());
+  const auto stmts = ln.get_first_child(hhds::ROOT);
   for (const auto &lnidx : ln.children(stmts)) {
     SearchNode(ln, lnidx, umod);
   }

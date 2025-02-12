@@ -14,7 +14,7 @@ protected:
   Lnast_node     in_lhs_rhs_node;
   hhds::Tree_pos in_lhs_sel_root;
 
-  hhds::Tree_pos cur_stmts = hhds::Tree_pos(-1, -1);
+  hhds::Tree_pos cur_stmts = hhds::Tree_pos(-1);
 
   absl::flat_hash_map<Lnast_ntype::Lnast_ntype_int, uint8_t> priority_map;
   absl::flat_hash_set<Rule_id>                               expr_rules;
@@ -44,15 +44,15 @@ protected:
   // rules that produce an RHS expression
   Lnast_node eval_expression(hhds::Tree_pos idx_start_ast, hhds::Tree_pos idx_start_ln);
   Lnast_node eval_tuple(const hhds::Tree_pos &idx_start_ast, const hhds::Tree_pos &idx_start_ln,
-                        hhds::Tree_pos idx_pre_tuple_vals  = hhds::Tree_pos(-1, -1),
-                        hhds::Tree_pos idx_post_tuple_vals = hhds::Tree_pos(-1, -1));
+                        hhds::Tree_pos idx_pre_tuple_vals  = hhds::Tree_pos(-1),
+                        hhds::Tree_pos idx_post_tuple_vals = hhds::Tree_pos(-1));
   Lnast_node eval_for_in_notation(hhds::Tree_pos idx_start_ast, hhds::Tree_pos idx_start_ln);
   Lnast_node eval_tuple_array_notation(hhds::Tree_pos idx_start_ast, hhds::Tree_pos idx_start_ln);
   Lnast_node eval_fcall_explicit(hhds::Tree_pos idx_start_ast, hhds::Tree_pos idx_start_ln,
-                                 hhds::Tree_pos idx_piped_val = hhds::Tree_pos(-1, -1), Lnast_node piped_node = Lnast_node(),
+                                 hhds::Tree_pos idx_piped_val = hhds::Tree_pos(-1), Lnast_node piped_node = Lnast_node(),
                                  Lnast_node name_node = Lnast_node());
   Lnast_node eval_fcall_implicit(hhds::Tree_pos idx_start_ast, hhds::Tree_pos idx_start_ln,
-                                 hhds::Tree_pos idx_piped_val = hhds::Tree_pos(-1, -1), Lnast_node piped_node = Lnast_node(),
+                                 hhds::Tree_pos idx_piped_val = hhds::Tree_pos(-1), Lnast_node piped_node = Lnast_node(),
                                  Lnast_node name_node = Lnast_node());
   Lnast_node eval_tuple_dot_notation(hhds::Tree_pos idx_start_ast, hhds::Tree_pos idx_start_ln);
   Lnast_node eval_bit_selection_notation(hhds::Tree_pos idx_start_ast, const Lnast_node &lhs_node);

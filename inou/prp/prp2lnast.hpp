@@ -152,9 +152,9 @@ protected:
 
   // TS API Helpers
   std::string_view get_text(const TSNode &node) const;
-  inline TSNode    get_child(const TSNode &, const char *) const;
-  inline TSNode    get_child(const TSNode &, unsigned int) const;
-  inline TSNode    get_child(const TSNode &) const;
+  inline TSNode    get_first_child(const TSNode &, const char *) const;
+  inline TSNode    get_first_child(const TSNode &, unsigned int) const;
+  inline TSNode    get_first_child(const TSNode &) const;
   inline TSNode    get_sibling(const TSNode &) const;
   inline TSNode    get_named_child(const TSNode &) const;
   inline TSNode    get_named_sibling(const TSNode &) const;

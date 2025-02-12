@@ -71,8 +71,8 @@ TEST_F(Ast_test_setup, ast_trivial) {
 
   scanner.parse_inline(statement);
 
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(1, 0)).rule_id, 13);
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(1, 1)).rule_id, 17);
+  EXPECT_EQ(ast->get_data(1).rule_id, 13);
+  EXPECT_EQ(ast->get_data(2).rule_id, 17);
 
   ast = nullptr;
 }
@@ -84,9 +84,9 @@ TEST_F(Ast_test_setup, ast_trivial2) {
 
   scanner.parse_inline(statement);
 
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(1, 0)).rule_id, 4);
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(2, 0)).rule_id, 1);
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(2, 1)).rule_id, 2);
+  EXPECT_EQ(ast->get_data(1).rule_id, 4);
+  EXPECT_EQ(ast->get_data(2).rule_id, 1);
+  EXPECT_EQ(ast->get_data(3).rule_id, 2);
 
   ast = nullptr;
 }
@@ -98,8 +98,8 @@ TEST_F(Ast_test_setup, ast_trivialc) {
 
   scanner.parse_inline(statement);
 
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(1, 0)).rule_id, 3);
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(2, 0)).rule_id, 6);
+  EXPECT_EQ(ast->get_data(1).rule_id, 3);
+  EXPECT_EQ(ast->get_data(2).rule_id, 6);
 
   ast = nullptr;
 }
@@ -111,9 +111,9 @@ TEST_F(Ast_test_setup, pseudo_eprp) {
 
   scanner.parse_inline(statement);
 
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(1, 0)).rule_id, 3);
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(2, 0)).rule_id, 6);
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(2, 1)).rule_id, 8);
+  EXPECT_EQ(ast->get_data(1).rule_id, 3);
+  EXPECT_EQ(ast->get_data(2).rule_id, 6);
+  EXPECT_EQ(ast->get_data(3).rule_id, 8);
 
   ast = nullptr;
 }
@@ -125,11 +125,11 @@ TEST_F(Ast_test_setup, pseudo_eprp3) {
 
   scanner.parse_inline(statement);
 
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(1, 0)).rule_id, 3);
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(2, 0)).rule_id, 6);
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(2, 1)).rule_id, 8);
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(3, 0)).rule_id, 7);
-  EXPECT_EQ(ast->get_data(hhds::Tree_pos(4, 0)).rule_id, 88);
+  EXPECT_EQ(ast->get_data(1).rule_id, 3);
+  EXPECT_EQ(ast->get_data(2).rule_id, 6);
+  EXPECT_EQ(ast->get_data(3).rule_id, 8);
+  EXPECT_EQ(ast->get_data(4).rule_id, 7);
+  EXPECT_EQ(ast->get_data(5).rule_id, 88);
 
   ast = nullptr;
 }

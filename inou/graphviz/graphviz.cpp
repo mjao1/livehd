@@ -306,7 +306,7 @@ void Graphviz::do_from_lnast(const std::shared_ptr<Lnast> &lnast, std::string_vi
     auto subs = node_data.subs;
     auto name = node_data.token.get_text();
 
-    auto id = std::to_string(itr.level) + std::to_string(itr.pos);
+    auto id = std::to_string(lnast->get_level(itr)) + std::to_string(lnast->get_pos(itr));
     if (node_data.type.is_ref()) {
       data += fmt::format(" {} [ label = <{}, {}<I><SUB><font color=\"#ff1020\">{}</font></SUB></I>> ];\n",
                           id,
@@ -328,7 +328,7 @@ void Graphviz::do_from_lnast(const std::shared_ptr<Lnast> &lnast, std::string_vi
     // get parent data for link
     auto p = lnast->get_parent(itr);
 
-    auto parent_id = std::to_string(p.level) + std::to_string(p.pos);
+    auto parent_id = std::to_string(lnast->get_level(p)) + std::to_string(lnast->get_pos(p));
     data += fmt::format(" {} -> {};\n", parent_id, id);
   }
 

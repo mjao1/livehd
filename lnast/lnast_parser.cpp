@@ -22,8 +22,8 @@ std::shared_ptr<Lnast> Lnast_parser::parse_all() {
 
 void Lnast_parser::parse_top() {
   // fmt::print("parse_top\n");
-  lnast->set_root(Lnast_node::create_top());
-	tree_pos.push(hhds::root());
+  lnast->add_root(Lnast_node::create_top());
+	tree_pos.push(hhds::ROOT);
 	parse_stmts();
 }
 

@@ -7,8 +7,8 @@
 #include "lgraph.hpp"
 
 Node_tree::Node_tree(Lgraph* root_arg)
-    : hhds::tree<Node>(root_arg->get_path(), absl::StrCat(root_arg->get_name(), "_ntree")), root(root_arg), last_free() {
-  set_root(Node());
+    : root(root_arg), last_free() {
+  set_data(hhds::ROOT, Node());
 
 #if 1
   assert(false);  // TO DEPRECATE SOON
@@ -85,7 +85,7 @@ Node_tree::Node_tree(Lgraph* root_arg)
 
 void Node_tree::dump() const {
   for (const auto& index : pre_order()) {
-    std::string indent(index.level, ' ');
+    std::string indent(index >> hhds::CHUNK_SHIFT, ' ');
     const auto& id = get_data(index);
 
     std::string name;
@@ -99,6 +99,6 @@ void Node_tree::dump() const {
       }
     }
 
-    fmt::print("{} name: {} loc: ({}, {}) livehd loc: ({})\n", indent, name, index.level, index.pos, id.get_hidx());
+    fmt::print("{} name: {} loc: ({}, {}) livehd loc: ({})\n", indent, name, index >> hhds::CHUNK_SHIFT, index & hhds::CHUNK_MASK, id.get_hidx());
   }
 }
